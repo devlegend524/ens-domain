@@ -1,13 +1,38 @@
-import './App.css';
+import React from "react";
+import "./App.css";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation
+} from "react-router-dom";
 
+import views from "views";
+import services from "services";
+
+import { routes } from "./routes";
+
+function Inner() {
+  const location = useLocation();
+  React.useEffect(
+    () => {
+      services.linking.routeChanged();
+    },
+    [location]
+  );
+  return (
+    <views.Wrapper>
+      <Routes>
+        {routes.map((route, i) => <Route {...route} key={i} />)}
+      </Routes>
+    </views.Wrapper>
+  );
+}
 function App() {
   return (
-    <div className="App  text-center">
-    {/* Delete the two lines below */}
-    <h1 className="text-4xl font-bold pt-20">This is a starter template for you!</h1>
-    <h1 className="text-2xl font-bold pt-10">All the best with your React + Tailwind project! 😃</h1>
-    <a href="https://github.com/tanmayhinge/react-tailwind-template" target="_blank" rel="noreferrer" className="text-blue-500 underline">Read Documentation for this Template</a>
-    </div>
+    <Router>
+      <Inner />
+    </Router>
   );
 }
 
