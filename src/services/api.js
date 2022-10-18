@@ -10,13 +10,13 @@ import client from "clients";
 
 import services from "services";
 
-class FNSClient {
+class AvvyClient {
   constructor(chainId, account, signerOrProvider) {
     this.chainId = parseInt(chainId);
-    this.fns = new client(signerOrProvider, {
+    this.wens = new client(signerOrProvider, {
       chainId
     });
-    this.contracts = this.fns.contracts;
+    this.contracts = this.wens.contracts;
 
     this.account = account;
     this.signer = signerOrProvider;
@@ -67,6 +67,20 @@ class FNSClient {
     return id;
   }
 
+  async isAuctionPeriod(auctionPhases) {
+    const biddingStartsAt = parseInt(auctionPhases[0]) * 1000;
+    const claimEndsAt = parseInt(auctionPhases[3]) * 1000;
+    const now = parseInt(Date.now());
+    return now >= biddingStartsAt && now < claimEndsAt;
+  }
+
+  async isBiddingOpen(auctionPhases) {
+    const biddingStartsAt = parseInt(auctionPhases[0]) * 1000;
+    const revealStartsAt = parseInt(auctionPhases[1]) * 1000;
+    const now = parseInt(Date.now());
+    return now >= biddingStartsAt && now < revealStartsAt;
+  }
+
   async isRegistrationPeriod() {
     return true;
   }
@@ -83,11 +97,11 @@ class FNSClient {
     return priceUSDCents;
   }
 
-  async getNamePriceETH(domain, conversionRate) {
+  async getNamePriceWETH(domain, conversionRate) {
     const _priceUSD = await this.getNamePrice(domain);
     const priceUSD = ethers.BigNumber.from(_priceUSD);
-    const priceETH = priceUSD.mul(conversionRate);
-    return priceETH;
+    const priceWETH = priceUSD.mul(conversionRate);
+    return priceWETH;
   }
 
   async nameHash(name) {
@@ -111,7 +125,7 @@ class FNSClient {
     return true;
   }
 
-  async getETHConversionRateFromChainlink(address) {
+  async getWETHConversionRateFromChainlink(address) {
     let oracle = new ethers.Contract(
       address,
       services.abi.chainlink,
@@ -120,31 +134,24 @@ class FNSClient {
     let roundData = await oracle.latestRoundData();
     let rate = roundData[1].toString();
 
-    // add a buffer to the rate, so that we can have less chance of getting a revert due to not enough ETH
+    // add a buffer to the rate, so that we can have less chance of getting a revert due to not enough WETH
     rate = ethers.BigNumber.from(rate).div("10").mul("9").toString();
 
     return rate;
   }
 
-  async getETHConversionRate() {
+  async getWETHConversionRate() {
     // this is just fixed price for now based on latestRound from oracle
     let rate;
-    if (this.chainId === 4002) {
-      rate = ethers.BigNumber.from("10000000000");
-    } else if (this.chainId === 4) {
-      rate = await this.getETHConversionRateFromChainlink(
-        "0x8A753747A1Fa494EC906cE90E9f37563A8AF630e"
+    if (this.chainId === 1) {
+      rate = await this.getWETHConversionRateFromChainlink(
+        "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419"
       );
-    } else if (this.chainId === 250) {
-      rate = await this.getETHConversionRateFromChainlink(
-        "0xf4766552D15AE4d256Ad41B6cf2933482B0680dc"
+    } else if (this.chainId === 5) {
+      rate = await this.getWETHConversionRateFromChainlink(
+        "0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e"
       );
     }
-    // else if (this.chainId === 4002) {
-    //   rate = await this.getETHConversionRateFromChainlink(
-    //     '0xf4766552D15AE4d256Ad41B6cf2933482B0680dc',
-    //   )
-    // }
     return ethers.BigNumber.from("10").pow("24").div(rate);
   }
 
@@ -176,9 +183,8 @@ class FNSClient {
     }
 
     let priceUSDCents = await this.getNamePrice(domain);
-    let wethConversionRate = await this.getETHConversionRate();
-
-    let priceETHEstimate = wethConversionRate
+    let wethConversionRate = await this.getWETHConversionRate();
+    let priceWETHEstimate = wethConversionRate
       .mul(ethers.BigNumber.from(priceUSDCents))
       .toString();
 
@@ -192,7 +198,7 @@ class FNSClient {
       owner,
       status: domainStatus,
       priceUSDCents,
-      priceETHEstimate,
+      priceWETHEstimate,
       timestamp: parseInt(Date.now() / 1000)
     };
   }
@@ -265,12 +271,12 @@ class FNSClient {
   async _getRegistrationArgs(domains, quantities) {
     let hashes = [];
     let total = ethers.BigNumber.from("0");
-    const conversionRate = await this.getETHConversionRate();
+    const conversionRate = await this.getWETHConversionRate();
 
     for (let i = 0; i < domains.length; i += 1) {
       let hash = await client.utils.nameHash(domains[i]);
       hashes.push(hash.toString());
-      let namePrice = await this.getNamePriceETH(domains[i], conversionRate);
+      let namePrice = await this.getNamePriceWETH(domains[i], conversionRate);
       total = total.add(
         ethers.BigNumber.from(quantities[i].toString()).mul(namePrice)
       );
@@ -284,14 +290,20 @@ class FNSClient {
   _getTreasuryGasSurplus() {
     return ethers.BigNumber.from("20000");
   }
-
+  async getRegistrationPremium() {
+    const now = parseInt(Date.now() / 1000);
+    const registrationPremium = await this.contracts.LeasingAgentV1.getRegistrationPremium(
+      now
+    );
+    return registrationPremium;
+  }
   async register(domains, quantities, constraintsProofs, pricingProofs) {
     const { total, hashes } = await this._getRegistrationArgs(
       domains,
       quantities
     );
     const premium = await this.getRegistrationPremium();
-    const value = total.add(premium.mul(hashes.length));
+    const value = total;
     const gasEstimate = await this.contracts.LeasingAgentV1.estimateGas.register(
       hashes,
       quantities,
@@ -312,42 +324,6 @@ class FNSClient {
       {
         gasLimit,
         value
-      }
-    );
-    await registerTx.wait();
-  }
-
-  async registerWithToken(
-    domains,
-    quantities,
-    constraintsProofs,
-    pricingProofs,
-    amount
-  ) {
-    const { total, hashes } = await this._getRegistrationArgs(
-      domains,
-      quantities
-    );
-    const premium = await this.getRegistrationPremium();
-    const value = total.add(premium.mul(hashes.length));
-    const gasEstimate = await this.contracts.LeasingAgentV1.estimateGas.registerWithToken(
-      hashes,
-      quantities,
-      constraintsProofs,
-      pricingProofs,
-      amount
-    );
-    const gasLimit = gasEstimate.add(
-      this._getTreasuryGasSurplus().mul(hashes.length)
-    );
-    const registerTx = await this.contracts.LeasingAgentV1.registerWithToken(
-      hashes,
-      quantities,
-      constraintsProofs,
-      pricingProofs,
-      amount,
-      {
-        gasLimit
       }
     );
     await registerTx.wait();
@@ -394,48 +370,6 @@ class FNSClient {
     await registerTx.wait();
   }
 
-  async registerWithPreimageWithToken(
-    domains,
-    quantities,
-    constraintsProofs,
-    pricingProofs,
-    preimages,
-    amount
-  ) {
-    const { total, hashes } = await this._getRegistrationArgs(
-      domains,
-      quantities
-    );
-    const premium = await this.getRegistrationPremium();
-    const value = amount.add(premium.mul(hashes.length));
-    console.log("starting gas estimation...");
-    const gasEstimate = await this.contracts.LeasingAgentV1.estimateGas.registerWithPreimageWithToken(
-      hashes,
-      quantities,
-      constraintsProofs,
-      pricingProofs,
-      preimages,
-      value
-    );
-
-    const gasLimit = gasEstimate.add(
-      this._getTreasuryGasSurplus().mul(hashes.length)
-    );
-    console.log(gasLimit);
-    const registerTx = await this.contracts.LeasingAgentV1.registerWithPreimageWithToken(
-      hashes,
-      quantities,
-      constraintsProofs,
-      pricingProofs,
-      preimages,
-      value,
-      {
-        gasLimit
-      }
-    );
-    await registerTx.wait();
-  }
-
   async generateNFTImage(names) {
     console.log("domain name: ", names);
     if (this.account) {
@@ -443,42 +377,145 @@ class FNSClient {
         this.account.toLowerCase()
       );
       console.log("domain ID: ", domainIDs[domainIDs.length - 1].toString());
-      const result = await services.nft.generateNFT(
+      await services.nft.generateNFT(
         names[0],
-        domainIDs[domainIDs.length - 1]
+        domainIDs[domainIDs.length - 1],
+        this.account.toLowerCase()
       );
     }
   }
 
-  getWethContract() {
+  async bid(hashes) {
+    const tx = await this.contracts.SunriseAuctionV1.bid(hashes);
+    await tx.wait();
+  }
+
+  async reveal(names, amounts, salt) {
+    const tx = await this.contracts.SunriseAuctionV1.reveal(
+      names,
+      amounts,
+      salt
+    );
+    await tx.wait();
+  }
+
+  async revealWithPreimage(names, amounts, salt, preimages) {
+    const tx = await this.contracts.SunriseAuctionV1.revealWithPreimage(
+      names,
+      amounts,
+      salt,
+      preimages
+    );
+    await tx.wait();
+  }
+
+  async getWinningBid(name) {
+    const hash = await client.utils.nameHash(name);
+    let result;
+    try {
+      const output = await this.contracts.SunriseAuctionV1.getWinningBid(
+        hash.toString()
+      );
+      try {
+        const owner = await this.ownerOf(hash.toString());
+        result = {
+          type: "IS_CLAIMED",
+          owner,
+          winner: output.winner,
+          auctionPrice: output.auctionPrice.toString(),
+          isWinner: output.winner.toLowerCase() === this.account
+        };
+      } catch (err) {
+        result = {
+          type: "HAS_WINNER",
+          winner: output.winner,
+          auctionPrice: output.auctionPrice.toString(),
+          isWinner: output.winner.toLowerCase() === this.account
+        };
+      }
+    } catch (err) {
+      result = {
+        type: "NO_WINNER"
+      };
+      console.log(err);
+    }
+    return result;
+  }
+
+  getWwethContract() {
     let contract;
-    if (this.chainId === 1) {
+    if (this.chainId === 31337) {
+      contract = this.contracts.MockWweth;
+    } else if (this.chainId === 43113) {
       contract = new ethers.Contract(
-        "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-        services.abi.weth,
+        "0xd00ae08403B9bbb9124bB305C09058E32C39A48c",
+        services.abi.wweth,
         this.signer
       );
-    } else if (this.chainId === 5) {
+    } else if (this.chainId === 43114) {
       contract = new ethers.Contract(
-        "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
+        "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
         services.abi.wweth,
         this.signer
       );
     }
     return contract;
   }
-  async getWethBalance() {
-    const contract = this.getWethContract();
+
+  async getWwethBalance() {
+    const contract = this.getWwethContract();
     const balance = await contract.balanceOf(this.account);
     return balance.toString();
   }
 
-  async wrapFtm(amount) {
-    const contract = this.getWethContract();
+  async getAuctionWweth() {
+    const contract = this.getWwethContract();
+    const allowance = await contract.allowance(
+      this.account,
+      this.contracts.SunriseAuctionV1.address
+    );
+    return allowance.toString();
+  }
+
+  async wrapWeth(amount) {
+    const contract = this.getWwethContract();
     const tx = await contract.deposit({
       value: amount
     });
     await tx.wait();
+  }
+
+  async approveWwethForAuction(amount) {
+    const contract = this.getWwethContract();
+    const tx = await contract.approve(
+      this.contracts.SunriseAuctionV1.address,
+      amount
+    );
+    await tx.wait();
+  }
+
+  async getRevealedBidForSenderCount() {
+    const count = await this.contracts.SunriseAuctionV1.getRevealedBidForSenderCount();
+    return count;
+  }
+
+  async getRevealedBidForSenderAtIndex(index) {
+    const bid = await this.contracts.SunriseAuctionV1.getRevealedBidForSenderAtIndex(
+      index
+    );
+    let nameSignal, preimage;
+    try {
+      nameSignal = await this.contracts.RainbowTableV1.lookup(bid.name);
+      preimage = await client.utils.decodeNameHashInputSignals(nameSignal);
+    } catch (err) {
+      preimage = null;
+    }
+    return {
+      name: bid.name,
+      amount: bid.amount,
+      timestamp: bid.timestamp,
+      preimage: preimage
+    };
   }
 
   async checkHasAccount() {
@@ -495,14 +532,6 @@ class FNSClient {
       signature
     );
     await tx.wait();
-  }
-
-  async getRegistrationPremium() {
-    const now = parseInt(Date.now() / 1000);
-    const registrationPremium = await this.contracts.LeasingAgentV1.getRegistrationPremium(
-      now
-    );
-    return registrationPremium;
   }
 
   async buildPreimages(names) {
@@ -564,7 +593,7 @@ class FNSClient {
   async getStandardRecords(domain) {
     // this won't work for subdomains yet.
     const hash = await client.utils.nameHash(domain);
-    const promises = this.fns.RECORDS._LIST.map(r =>
+    const promises = this.wens.RECORDS._LIST.map(r =>
       this.contracts.PublicResolverV1.resolveStandard(hash, hash, r.key)
     );
     const results = await Promise.all(promises);
@@ -581,22 +610,37 @@ class FNSClient {
   async getReverseRecords(domain) {
     const hash = await client.utils.nameHash(domain);
     const promises = [
-      this.fns.contracts.EVMReverseResolverV1.getEntry(hash, hash)
+      this.wens.contracts.EVMReverseResolverV1.getEntry(hash, hash)
     ];
     const results = await Promise.all(promises);
     return {
-      [this.fns.RECORDS.EVM]:
+      [this.wens.RECORDS.EVM]:
         results[0] === "0x0000000000000000000000000000000000000000"
           ? null
           : results[0]
     };
   }
 
+  async getProfile(address) {
+    const hash = await this.wens.reverse(this.wens.RECORDS.EVM, address);
+    let _name, name, avatar;
+    try {
+      _name = await hash.lookup();
+    } catch (err) {}
+    if (_name) {
+      name = _name.name;
+      const _avatar = await _name.resolve(this.wens.RECORDS.AVATAR);
+      if (_avatar) avatar = _avatar;
+    }
+    return {
+      name,
+      avatar
+    };
+  }
+
   async setEVMReverseRecord(domain) {
     const hash = await client.utils.nameHash(domain);
-    console.log("evm reverse domain: ", domain);
-    console.log("evm reverse hash: ", hash);
-    const tx = await this.fns.contracts.EVMReverseResolverV1.set(hash, []);
+    const tx = await this.wens.contracts.EVMReverseResolverV1.set(hash, []);
     await tx.wait();
   }
 
@@ -604,6 +648,7 @@ class FNSClient {
     const balance = await this.signer.getBalance();
     return balance;
   }
+
   async transferDomain(domain, address) {
     const tokenId = await client.utils.nameHash(domain);
     const tx = await this.contracts.Domain[
@@ -613,4 +658,4 @@ class FNSClient {
   }
 }
 
-export default FNSClient;
+export default AvvyClient;

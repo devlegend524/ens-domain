@@ -7,7 +7,7 @@ const data = {
   backup: async () => {
     const data = await storage.getItem("persist:root");
     const timestamp = parseInt(Date.now());
-    files.download(data, "application/json", `fns-backup-${timestamp}.json`);
+    files.download(data, "application/json", `wens-backup-${timestamp}.json`);
   },
 
   restore: async () => {
@@ -26,7 +26,7 @@ const data = {
   reset: () => {
     if (
       window.confirm(
-        "Your browser stores your hidden domain names. Please ensure you have backed up your data before continuing."
+        "Your browser stores your auction bids, as well as your hidden domain names. Please ensure you have backed up your data before continuing."
       )
     ) {
       storage.setItem("persist:root", null);

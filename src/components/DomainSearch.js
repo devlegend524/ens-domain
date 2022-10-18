@@ -32,7 +32,7 @@ function DomainSearch(props) {
           className="text-xl md:text-xl font-bold leading-tighter tracking-tighter mb-4 text-left"
           data-aos="zoom-y-out"
         >
-          {'Search Fantom Domain names'}
+          {'Search Ethereum Domain names'}
         </div>
       )}
       <div className="bg-gray-100 rounded-xl w-full text-center relative dark:bg-gray-800">
@@ -41,7 +41,7 @@ function DomainSearch(props) {
             autoComplete="off"
             ref={textInput}
             autoCapitalize="off"
-            placeholder={props.placeholder || 'Search domain names'}
+            placeholder={props.placeholder || 'Search wrapped domain names'}
             className="bg-transparent w-full placeholder:text-gray-400 text-black dark:text-gray-300 text-center p-4"
           />
         </form>

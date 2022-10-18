@@ -153,7 +153,7 @@ const Hash = function(hash, provider) {
   };
 };
 
-const FNS = function(_provider, _opts) {
+const WENS = function(_provider, _opts) {
   // optionally pass chainId
   const opts = _opts || {};
   const chainId = opts.chainId || 43114;
@@ -200,8 +200,8 @@ const FNS = function(_provider, _opts) {
   };
 };
 
-FNS.blocklist = blocklist;
-FNS.RECORDS = records;
-FNS.utils = utils;
+WENS.blocklist = blocklist;
+WENS.RECORDS = records;
+WENS.utils = utils;
 
-export default FNS;
+export default WENS;

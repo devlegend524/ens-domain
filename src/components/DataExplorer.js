@@ -4,7 +4,7 @@ import services from "services";
 class DataExplorer extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.getFNS();
+    this.getWENS();
 
     this.vendors = {
       // block explorers
@@ -68,9 +68,9 @@ class DataExplorer extends React.PureComponent {
     };
   }
 
-  async getFNS() {
+  async getWENS() {
     const api = await services.provider.buildAPI();
-    this.fns = api.fns;
+    this.wens = api.wens;
   }
 
   renderVendor(key, getLink) {
@@ -199,7 +199,7 @@ class DataExplorer extends React.PureComponent {
   }
 
   renderLinks() {
-    const records = this.fns.RECORDS;
+    const records = this.wens.RECORDS;
     switch (this.props.data.dataType) {
       case records.EVM:
         return this.renderEVM();
@@ -235,7 +235,7 @@ class DataExplorer extends React.PureComponent {
   }
 
   getTitle() {
-    const records = this.fns.RECORDS;
+    const records = this.wens.RECORDS;
     let title = {
       [records.X_CHAIN]: "View on Block Explorer",
       [records.P_CHAIN]: "View on Block Explorer",
@@ -256,7 +256,7 @@ class DataExplorer extends React.PureComponent {
 
   render() {
     if (!this.props.data) return null;
-    if (!this.fns) return null;
+    if (!this.wens) return null;
     const title = this.getTitle();
 
     return (

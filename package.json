@@ -1,5 +1,5 @@
 {
-  "name": "fns-fantom",
+  "name": "wens-fantom",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -14,7 +14,9 @@
     "@sentry/tracing": "^7.12.1",
     "@testing-library/user-event": "^13.5.0",
     "@walletconnect/web3-provider": "^1.8.0",
+    "@web3-react/core": "^6.1.9",
     "axios": "^0.27.2",
+    "canvas": "^2.10.1",
     "chai": "^4.3.6",
     "circomlibjs": "git+https://git@github.com/connorbode/circomlibjs.git",
     "crypto": "^1.0.1",
@@ -27,6 +29,7 @@
     "http": "0.0.1-security",
     "https": "^1.0.0",
     "immutable": "^4.1.0",
+    "jquery": "^3.6.1",
     "localforage": "^1.10.0",
     "os": "^0.1.2",
     "prompts": "^2.4.2",
@@ -36,6 +39,7 @@
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.6",
     "react-refresh": "^0.8.3",
+    "react-ridge-state": "^4.2.9",
     "react-router-dom": "^6.0.2",
     "react-scripts": "^5.0.1",
     "redux-persist": "^6.0.0",

@@ -1,0 +1,44 @@
+.image-container {
+    vertical-align: middle;
+    display: inline-block;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+    position: relative;
+}
+
+.prev,
+.next {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    border-color: white;
+    border-width: 1px;
+    cursor: pointer;
+    color: white;
+    background-color: #0B0B0E;
+    transition: 0.6s ease;
+}
+
+.next {
+    z-index: 30;
+    top: -15px;
+    left: -30px;
+}
+
+.prev {
+    z-index: 30;
+    top: -15px;
+}
+
+.prev:hover,
+.next:hover {
+    color: white;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.image-container::-webkit-scrollbar {
+    display: none;
+}

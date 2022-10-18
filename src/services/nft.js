@@ -1,20 +1,27 @@
 //
 // Helpful time functions
 //
-import environment from './environment'
-import axios from 'axios'
+import environment from "./environment";
+import axios from "axios";
 const nft = {
-  generateNFT: async (name, tokenId) => {
+  generateNFT: async (name, tokenId, address) => {
     const res = await axios.post(
-      `${environment.BACKEND_BASE_URL}/generateNFT`,
+      `${environment.BACKEND_BASE_URL}/api/generateNFT`,
       {
         name: name,
         tokenId: tokenId,
-      },
-    )
-    console.log(res)
-    return res
+        address: address
+      }
+    );
+    console.log(res);
+    return res;
   },
-}
+  getRecentNFTs: async () => {
+    const res = await axios.get(
+      `${environment.BACKEND_BASE_URL}/api/getRecentNFTs`
+    );
+    return res.data;
+  }
+};
 
-export default nft
+export default nft;

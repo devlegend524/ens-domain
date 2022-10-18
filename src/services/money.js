@@ -21,15 +21,16 @@ const money = {
     return `$${dollars}.${cents} USD`;
   },
 
+  renderWWETH: amount => {
+    const amt = ethers.utils.formatEther(amount);
+    return (+amt).toFixed(4) + " WWETH";
+  },
+
   renderWETH: amount => {
     const amt = ethers.utils.formatEther(amount);
     return (+amt).toFixed(4) + " WETH";
   },
 
-  renderETH: amount => {
-    const amt = ethers.utils.formatEther(amount);
-    return (+amt).toFixed(4) + " ETH";
-  },
   // multiplies two strings together
   mul: (str1, str2) => {
     const n1 = ethers.BigNumber.from(str1);

@@ -6,15 +6,18 @@ import localforage from "localforage";
 // import reducers
 import components from "components";
 import services from "services";
-// import views from "views";
+import views from "views";
 
 const reducerMap = {};
 
 const reducers = [
   components.account.reducer,
+  views.Domain.redux.reducer,
+  views.MyDomains.redux.reducer,
+  views.Register.redux.reducer,
   services.analytics.reducer,
-  services.cart.reducer,
   services.darkmode.reducer,
+  services.cart.reducer,
   services.names.reducer,
   services.proofs.reducer,
   services.user.reducer
