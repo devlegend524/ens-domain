@@ -6,16 +6,29 @@ export const initialState = {
   domainIds: [],
   domainCount: null,
   loadedDomainCount: 0,
+  expiries: {},
 
   token: null,
 
   // connection criteria
   hasAcceptedDisclaimers: false,
   injectSentry: false,
+
+  // wallet autoconnect
+  walletAutoconnect: null,
 }
 
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
+    case constants.SET_DOMAIN_EXPIRY:
+      return {
+        ...state,
+        expiries: {
+          ...state.expiries,
+          [action.hash]: action.expiry
+        }
+      }
+
     case constants.SET_DOMAIN_IDS:
       return {
         ...state,
@@ -42,7 +55,14 @@ export const reducer = (state = initialState, action) => {
 
     case constants.ACCEPT_DISCLAIMERS:
       return {
+        ...state,
         hasAcceptedDisclaimers: true,
+      }
+
+    case constants.SET_WALLET_AUTOCONNECT:
+      return {
+        ...state,
+        walletAutoconnect: action.wallet
       }
 
     default:

@@ -1,4 +1,4 @@
-import client from 'clients'
+import client from "clients";
 
 const random = {
   salt: () => {
@@ -13,12 +13,12 @@ const random = {
       window.innerHeight,
       window.innerWidth,
       window.navigator.userAgent,
-      Date.now().toString(),
-    ]
-    const input = inputs.join(',')
-    const salt = client.utils.keccak256(input)
-    return salt
-  },
-}
+      Date.now().toString()
+    ];
+    const input = inputs.join(",");
+    const salt = client.utils.keccak256(input);
+    return salt;
+  }
+};
 
-export default random
+export default random;

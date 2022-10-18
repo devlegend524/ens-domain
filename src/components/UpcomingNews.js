@@ -8,8 +8,8 @@ function UpcomingNews(props) {
         data-aos="zoom-y-out"
       >
         {props.explorer
-          ? 'Fantom Name Service Explorer'
-          : 'Fantom Name Service Browser'}
+          ? 'Ethereum Name Service Explorer'
+          : 'Ethereum Name Service Browser'}
       </div>
       <div
         className="text-xl md:text-xl text-center max-w-md m-auto mt-4 mb-8 py-10 px-5"

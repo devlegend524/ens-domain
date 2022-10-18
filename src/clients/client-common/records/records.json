@@ -15,7 +15,7 @@
         "node_id": "NodeID-[A-Za-z0-9]{33}"
       },
       "label": "Validator NodeID",
-      "description": "Validator NodeID on the Fantom Network"
+      "description": "Validator NodeID on the Ethereum Network"
     },
     {
       "key": 5,

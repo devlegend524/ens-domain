@@ -14,7 +14,8 @@ const environment = {
   REGISTRATIONS_ENABLED: true,
   SENTRY_DSN: process.env.REACT_APP_SENTRY_DSN,
   ENVIRONMENT: process.env.REACT_APP_ENVIRONMENT,
-  PROOF_KEY: process.env.REACT_APP_PROOF_KEY
-};
+  AUCTION_KEY: process.env.REACT_APP_AUCTION_KEY,
+  PROOF_KEY: process.env.REACT_APP_PROOF_KEY,
+}
 
-export default environment;
+export default environment

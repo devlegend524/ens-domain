@@ -19,6 +19,7 @@ import records from "./records";
 import redux from "./redux";
 import time from "./time";
 import user from "./user";
+import cart from "./cart";
 import nft from "./nft";
 
 const services = {
@@ -26,6 +27,7 @@ const services = {
   abi,
   analytics,
   api,
+  cart,
   circuits,
   darkmode,
   data,
@@ -42,8 +44,8 @@ const services = {
   records,
   redux,
   time,
-  user,
-  nft
+  nft,
+  user
 };
 
 export default services;

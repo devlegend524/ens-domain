@@ -1,21 +1,22 @@
-import ConnectWallet from './ConnectWallet'
-import ContinueRegistration from './ContinueRegistration'
-import DataExplorer from './DataExplorer'
-import DomainPrivacy from './DomainPrivacy'
-import DomainSearch from './DomainSearch'
-import DomainReveal from './DomainReveal'
-import Input from './Input'
-import Modal from './Modal'
-import ProgressBar from './ProgressBar'
-import Select from './Select'
-import Spinner from './Spinner'
+import ConnectWallet from "./ConnectWallet";
+import ContinueRegistration from "./ContinueRegistration";
+import DataExplorer from "./DataExplorer";
+import DomainPrivacy from "./DomainPrivacy";
+import DomainSearch from "./DomainSearch";
+import DomainReveal from "./DomainReveal";
+import Input from "./Input";
+import Modal from "./Modal";
+import ProgressBar from "./ProgressBar";
+import Select from "./Select";
+import Spinner from "./Spinner";
 
-import account from './account'
-import buttons from './buttons'
-import checkbox from './checkbox'
-import labels from './labels'
-import UpcomingNews from './UpcomingNews'
-
+import account from "./account";
+import buttons from "./buttons";
+import checkbox from "./checkbox";
+import labels from "./labels";
+import UpcomingNews from "./UpcomingNews";
+import ScrollMenu from "./ScrollMenu";
+import NFTCard from "./NFTCard";
 const components = {
   account,
   buttons,
@@ -34,6 +35,8 @@ const components = {
   Select,
   Spinner,
   UpcomingNews,
-}
+  NFTCard,
+  ScrollMenu
+};
 
-export default components
+export default components;

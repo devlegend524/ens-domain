@@ -12,12 +12,20 @@ import { SafeAppProvider } from "@gnosis.pm/safe-apps-provider";
 
 import services from "services";
 
+let store;
+
 let _isConnected = false;
 let _chainId;
 let _account;
 let _provider;
 let _signer;
 let _providerType; // METAMASK or WALLETCONNECT
+
+const CONNECTION_TYPES = {
+  METAMASK: 1,
+  WALLETCONNECT: 2,
+  CORE: 3
+};
 
 const PROVIDER_TYPES = {
   METAMASK: 1,
@@ -27,7 +35,12 @@ const PROVIDER_TYPES = {
 const events = new EventTarget();
 
 const EVENTS = {
-  CONNECTED: 1
+  CONNECTED: 1,
+  DISCONNECTED: 2
+};
+
+const setWalletAutoconnect = async wallet => {
+  store.store.dispatch(services.user.actions.setWalletAutoconnect(wallet));
 };
 
 const provider = {
@@ -57,7 +70,6 @@ const provider = {
       _chainId = chainId;
       _account = safe.safeAddress;
       _isConnected = true;
-      const balance = await _signer.getBalance();
 
       // we put a timeout here to let react
       // components digest the connection first
@@ -69,9 +81,30 @@ const provider = {
     }
   },
 
-  init: () => {
+  autoconnect: async () => {
+    const state = store.store.getState();
+    const walletAutoconnect = services.user.selectors.walletAutoconnect(state);
+
+    switch (walletAutoconnect) {
+      case CONNECTION_TYPES.METAMASK:
+        provider.connectMetamask();
+        break;
+
+      case CONNECTION_TYPES.WALLETCONNECT:
+        provider.connectWalletConnect();
+        break;
+
+      default:
+        return;
+    }
+  },
+
+  init: _store => {
+    store = _store;
+
     // this performs some checks when the application starts
     provider.initGnosisSafe();
+    provider.autoconnect();
   },
 
   connectWalletConnect: () => {
@@ -127,24 +160,41 @@ const provider = {
           window.location.reload();
         });
 
+        await setWalletAutoconnect(CONNECTION_TYPES.WALLETCONNECT);
         resolve();
       }
     });
   },
 
+  disconnectWallet: async () => {
+    if (_provider.disconnect) _provider.disconnect();
+
+    _isConnected = false;
+    _chainId = undefined;
+    _account = undefined;
+    _provider = undefined;
+    _signer = undefined;
+    _providerType = undefined;
+
+    events.dispatchEvent(new Event(EVENTS.DISCONNECTED));
+
+    await setWalletAutoconnect(null);
+  },
+
   // connect to web3 via metamask
-  connectMetamask: providerFunc => {
+  connectMetamask: (providerFunc, connectionType) => {
     return new Promise(async (resolve, reject) => {
       let provider = await detectEthereumProvider();
       if (provider.providers) {
         provider = provider.providers.find(providerFunc);
       }
 
+      if (!connectionType) connectionType = CONNECTION_TYPES.METAMASK;
+
       if (!provider) {
         services.logger.error("No window.ethereum provider");
         return reject("NO_PROVIDER");
       }
-      console.log(provider);
 
       const _getChainId = async () => {
         const raw = await provider.request({ method: "eth_chainId" });
@@ -154,37 +204,6 @@ const provider = {
       // verify they connected to the right chain
       const chainId = await _getChainId();
       const expectedChainId = parseInt(services.environment.DEFAULT_CHAIN_ID);
-
-      services.logger.info("expectedChainId: " + expectedChainId);
-      const checkNewChain = window.localStorage.getItem("fantom_network");
-      if (!checkNewChain) {
-        try {
-          services.logger.info("Attempting to add chain");
-          await provider.request({
-            method: "wallet_addEthereumChain",
-            params: [
-              {
-                chainId: "0x" + expectedChainId.toString(16),
-                chainName: services.environment.DEFAULT_CHAIN_NAME,
-                nativeCurrency: {
-                  name: "ETH",
-                  symbol: "ETH",
-                  decimals: 18
-                },
-                rpcUrls: [services.environment.DEFAULT_PROVIDER_URL],
-                blockExplorerUrls: [
-                  services.environment.DEFAULT_BLOCK_EXPLORER_URL
-                ]
-              }
-            ]
-          });
-          window.localStorage.setItem("fantom_network", true);
-          window.location.reload();
-        } catch (err) {
-          services.logger.error(err);
-          return reject("WRONG_CHAIN");
-        }
-      }
       if (chainId !== expectedChainId) {
         try {
           services.logger.info("Attempting to switch chains");
@@ -208,8 +227,8 @@ const provider = {
                   chainId: "0x" + expectedChainId.toString(16),
                   chainName: services.environment.DEFAULT_CHAIN_NAME,
                   nativeCurrency: {
-                    name: "ETH",
-                    symbol: "ETH",
+                    name: "WETH",
+                    symbol: "WETH",
                     decimals: 18
                   },
                   rpcUrls: [services.environment.DEFAULT_PROVIDER_URL],
@@ -259,6 +278,7 @@ const provider = {
           window.location.reload();
         });
 
+        await setWalletAutoconnect(connectionType);
         resolve();
       }
     });
@@ -268,11 +288,14 @@ const provider = {
     return new Promise(async (resolve, reject) => {
       const handleChanged = () => {
         window.ethereum.off("accountsChanged", handleChanged);
-        provider.connectMetamask(provider => provider.isFantom);
+        provider.connectMetamask(provider => provider.isAvalanche);
         resolve();
       };
       window.ethereum.on("accountsChanged", handleChanged);
-      provider.connectMetamask(provider => provider.isFantom);
+      provider.connectMetamask(
+        provider => provider.isAvalanche,
+        CONNECTION_TYPES.CORE
+      );
     });
   },
 
