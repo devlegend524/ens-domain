@@ -110,10 +110,6 @@ class DataExplorer extends React.PureComponent {
           "etherscan",
           d => `https://goerli.etherscan.io/address/${d}`
         )}
-        {this.renderVendor(
-          "vscout",
-          d => `https://goerli.etherscan.io/address/${d}`
-        )}
       </div>
     );
   }
@@ -178,24 +174,12 @@ class DataExplorer extends React.PureComponent {
 
   renderContent() {
     const data = this.props.data.data;
-    const proto = data.split("://")[0];
-    const getIPFSHash = d => d.split("://")[1];
 
-    if (proto === "ipfs")
-      return (
-        <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-4">
-          {this.renderVendor(
-            "ipfs",
-            d => `https://ipfs.io/ipfs/${getIPFSHash(d)}`
-          )}
-          {this.renderVendor(
-            "cloudflare",
-            d => `https://cloudflare-ipfs.com/ipfs/${getIPFSHash(d)}`
-          )}
-        </div>
-      );
-
-    return <div className="text-center py-4">Unknown content protocol</div>;
+    return (
+      <div className="text-center text-blue-800 py-4">
+        {data}
+      </div>
+    );
   }
 
   renderLinks() {
@@ -244,7 +228,7 @@ class DataExplorer extends React.PureComponent {
       [records.DNS_CNAME]: "DNS Information",
       [records.DNS_A]: "IP Address Information",
       [records.AVATAR]: "Preview Avatar",
-      [records.DESCRIPTION]: "Open on IPFS Gateway",
+      [records.DESCRIPTION]: "Description",
       [records.TELEGRAM]: "Open on Telegram",
       [records.TWITTER]: "Open on Twitter",
       [records.FACEBOOK]: "Open on Facebook",

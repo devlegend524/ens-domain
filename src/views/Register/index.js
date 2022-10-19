@@ -268,7 +268,14 @@ class Register extends React.PureComponent {
                 onClick={this.startPurchase.bind(this)}
                 disabled={this.props.balance.lt(total.weth)}
               >
-                {"Continue Registration"}
+                <div className="flex justify-center items-center">
+                  {this.props.isFinalizing ? (
+                    <components.Spinner size="sm" />
+                  ) : (
+                    ""
+                  )}
+                  {"Confirm Registration"}
+                </div>
               </Button>
               <Button
                 className="cursor-pointer"
@@ -324,14 +331,13 @@ class Register extends React.PureComponent {
           }
         />
         <div className="mt-8 max-w-sm m-auto">
-          <Button
+          <components.buttons.CustomButton
             variant="gradient"
             ripple={true}
             color="gray"
+            text={"Reload page"}
             onClick={() => window.location.reload()}
-          >
-            {"Reload page"}
-          </Button>
+          />
         </div>
       </>
     );
@@ -349,13 +355,15 @@ class Register extends React.PureComponent {
       return (
         <div className="max-w-md m-auto">
           <div className="flex justify-center mt-2 md:mt-8 mb-4 items-center">
-            <div className="text-lg font-bold pl-2">
+            <div className="text-lg font-bold pl-2 py-4">
               {"Register New Domain"}
             </div>
           </div>
-          <div className="mb-8">
-            <components.labels.Information
-              text={"You haven't selected any names to register"}
+          <div className="mb-8 flex justify-center">
+            <img
+              src={services.linking.static("images/nft_bg.png")}
+              alt="NFT PIC"
+              srcSet=""
             />
           </div>
           <components.DomainSearch />
@@ -386,6 +394,9 @@ class Register extends React.PureComponent {
         {this.state.startPurchase ? (
           <div className="w-full m-auto">
             <components.ProgressBar progress={this.props.progress.percent} />
+            <div className="mb-4 text-center text-gray-400 flex items-center justify-center">
+              {this.props.progress.message}
+            </div>
           </div>
         ) : (
           ""
@@ -395,7 +406,9 @@ class Register extends React.PureComponent {
             {names.map(this.renderName.bind(this))}
           </div>
           <div className=" mt-8 w-full p-3">
-            {!this.props.isComplete && this.renderNames()}
+            {!this.props.isComplete && !this.props.hasError
+              ? this.renderNames()
+              : ""}
             {this.props.isComplete && this.renderComplete()}
             {this.props.hasError && this.renderHasError()}
           </div>

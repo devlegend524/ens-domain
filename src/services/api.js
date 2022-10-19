@@ -10,7 +10,7 @@ import client from "clients";
 
 import services from "services";
 
-class AvvyClient {
+class WensClient {
   constructor(chainId, account, signerOrProvider) {
     this.chainId = parseInt(chainId);
     this.wens = new client(signerOrProvider, {
@@ -272,9 +272,10 @@ class AvvyClient {
     let hashes = [];
     let total = ethers.BigNumber.from("0");
     const conversionRate = await this.getWETHConversionRate();
-
+    console.log(domains.length);
     for (let i = 0; i < domains.length; i += 1) {
       let hash = await client.utils.nameHash(domains[i]);
+      console.log(quantities[i]);
       hashes.push(hash.toString());
       let namePrice = await this.getNamePriceWETH(domains[i], conversionRate);
       total = total.add(
@@ -658,4 +659,4 @@ class AvvyClient {
   }
 }
 
-export default AvvyClient;
+export default WensClient;
