@@ -32,7 +32,7 @@ class SetResolver extends React.PureComponent {
     if (this.props.complete) return (
       <>
         <div className='max-w-md m-auto'>
-          <components.labels.Success text={'Reverse Record for C-Chain / EVM has been set'} />
+          <components.labels.Success text={'Primary has been set'} />
         </div>
         <div className='max-w-md m-auto mt-4'>
           <components.buttons.Button text={'Close'} onClick={() => {
@@ -46,17 +46,11 @@ class SetResolver extends React.PureComponent {
     return (
       <>
         <div className='max-w-md m-auto'>
-          <div className='font-bold mt-8'>
-            {'What is this?'}
-          </div>
           <div className='mb-2'>
-            {'This feature sets '} {this.props.domain} {'as the name associated with your connected wallet (' + this.state.walletAddress + ')'}
-          </div>
-          <div className='mb-2'>
-            {'Applications can then find your .avax name if they know your wallet address.'}
+            {'Applications can then find your .weth name if they know your wallet address.'}
           </div>
           <div className='mt-8'>
-            <components.buttons.Button sm={true} text={'Set Reverse Record'} onClick={() => this.submit()} loading={this.props.loading} />
+            <components.buttons.Button sm={true} text={'Set as Primary'} onClick={() => this.submit()} loading={this.props.loading} />
           </div>
         </div>
       </>
