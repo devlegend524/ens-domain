@@ -125,14 +125,13 @@ class MyDomains extends React.PureComponent {
                   <SearchIcon className="w-5 mx-2" />
                   <input
                     type="text"
-                    placeholder="Search"
-                    className="w-full p-2 bg-gray-100 dark:bg-gray-800"
+                    placeholder="Search Domain"
+                    className="w-full p-2 bg-white dark:bg-gray-800"
                     onChange={(e) => {
                       if (this.searchTimeout) clearTimeout(this.searchTimeout);
                       this.searchTimeout = setTimeout(() => {
                         this.setState({
                           search: e.target.value.toLowerCase(),
-                          paginationIndex: 0,
                         });
                       }, 300);
                     }}
@@ -140,33 +139,16 @@ class MyDomains extends React.PureComponent {
                 </div>
               </div>
             </div>
+
             {domains.length > 0 ? (
-              domains.map((hash, index) => {
-                const domain = reverseLookups[hash];
-                return (
-                  <Link
-                    to={services.linking.path("Domain", { domain })}
-                    className={`table-row ${
-                      index < domains.length - 1
-                        ? "border-b border-gray-200 dark:border-gray-700"
-                        : ""
-                    }`}
-                    key={index}
-                  >
-                    <div className="py-6 table-cell">
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <div className="font-bold">{domain}</div>
-                        </div>
-                        <ArrowRightIcon className="h-6 md:hidden" />
-                      </div>
-                    </div>
-                    <div className="pr-4 align-middle table-cell hidden md:table-cell">
-                      <ArrowRightIcon className="h-6" />
-                    </div>
-                  </Link>
-                );
-              })
+              <div class="grid sm:flex sm:justify-center sm:flex-col sm:items-center md:grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-2 sm:gap-4 md:gap-2">
+                {domains.map((hash, index) => {
+                  const domain = reverseLookups[hash];
+                  return (
+                    <components.NFTCard name={domain} isLinked={true} />
+                  );
+                })}
+              </div>
             ) : (
               <div className="w-full py-8 font-bold text-center">
                 No results

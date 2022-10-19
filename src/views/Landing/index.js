@@ -54,7 +54,7 @@ export default function Landing() {
           >
             {nfts.length > 0
               ? nfts.map((nft, i) => (
-                  <components.NFTCard name={nft.domain} isLinked={true} key={i} />
+                  <components.NFTCard name={nft.domain} isLinked={true} classes="m-4" key={i} />
                 ))
               : ""}
           </components.ScrollMenu>
