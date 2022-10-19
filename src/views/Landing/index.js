@@ -45,19 +45,28 @@ export default function Landing() {
             </Button>
           </div>
         </div>
-        <div className="border border-gray-100 m-2">
-          <components.ScrollMenu
-            containerId="all-game-container"
-            leftButtonId="all-game-left"
-            rightButtonId="all-game-right"
-            size="350"
-          >
-            {nfts.length > 0
-              ? nfts.map((nft, i) => (
-                  <components.NFTCard name={nft.domain} isLinked={true} classes="m-4" key={i} />
-                ))
-              : ""}
-          </components.ScrollMenu>
+        <div className="border border-gray-100 m-2 p-2">
+          {nfts.length > 0 ? (
+            <components.ScrollMenu
+              containerId="all-game-container"
+              leftButtonId="all-game-left"
+              rightButtonId="all-game-right"
+              size="350"
+            >
+              {nfts.map((nft, i) => (
+                <components.NFTCard
+                  name={nft.domain}
+                  isLinked={true}
+                  classes="m-4"
+                  key={i}
+                />
+              ))}
+            </components.ScrollMenu>
+          ) : (
+            <div className="flex justify-center mx-auto ">
+              <components.Spinner size="md" color={"black"} />
+            </div>
+          )}
         </div>
       </div>
     </>

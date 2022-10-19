@@ -215,7 +215,7 @@ const provider = {
               }
             ]
           });
-          window.location.reload();
+          continueInitialization();
         } catch (err) {
           services.logger.info("Chain not found");
           try {
@@ -227,8 +227,8 @@ const provider = {
                   chainId: "0x" + expectedChainId.toString(16),
                   chainName: services.environment.DEFAULT_CHAIN_NAME,
                   nativeCurrency: {
-                    name: "WETH",
-                    symbol: "WETH",
+                    name: "ETH",
+                    symbol: "ETH",
                     decimals: 18
                   },
                   rpcUrls: [services.environment.DEFAULT_PROVIDER_URL],
@@ -238,7 +238,7 @@ const provider = {
                 }
               ]
             });
-            window.location.reload();
+            continueInitialization();
           } catch (err) {
             services.logger.error(err);
             return reject("WRONG_CHAIN");
@@ -273,10 +273,10 @@ const provider = {
           window.location.reload();
         });
 
-        window.ethereum.on("chainChanged", () => {
-          services.logger.info("Metamask chain changed; reloading page");
-          window.location.reload();
-        });
+        // window.ethereum.on("chainChanged", () => {
+        //   services.logger.info("Metamask chain changed; reloading page");
+        //   window.location.reload();
+        // });
 
         await setWalletAutoconnect(connectionType);
         resolve();
