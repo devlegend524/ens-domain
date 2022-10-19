@@ -160,33 +160,6 @@ class Domain extends React.PureComponent {
           <CheckCircleIcon className="w-6 text-alert-blue mr-2" />
           <div className="text-alert-blue">{"Available for registration"}</div>
         </div>
-        {this.props.registrationPremium.gt(ethers.BigNumber.from("0")) ? (
-          <div className="mt-4 border-2 rounded-lg border-gray-100 dark:border-gray-700 p-4">
-            <div className="font-bold">Registration Premium</div>
-            <div>
-              {
-                "The .avax namespace is currently launching. Names can be acquired, but a one-time Registration Premium must be paid in AVAX. This Registration Premium decreases as time passes, eventually reaching 0."
-              }
-            </div>
-            <div className="mt-4 underline">
-              <a
-                href="https://wens.domains/auction-guide/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Read more about Registration Premiums
-              </a>
-            </div>
-            <div className="mt-4">
-              Current Premium:{" "}
-              <span className="font-bold">
-                {services.money.renderAVAX(this.props.registrationPremium)}
-              </span>
-            </div>
-          </div>
-        ) : (
-          <div className="p-4"></div>
-        )}
         {services.environment.REGISTRATIONS_ENABLED ? (
           <div className="mt-4">
             <components.buttons.Button
@@ -220,18 +193,15 @@ class Domain extends React.PureComponent {
     const isOwned = account
       ? account.toLowerCase() === this.props.domain.owner.toLowerCase()
       : false;
-    const hasLoadedPrivacy =
-      !!this.props.isRevealed &&
-      this.props.isRevealed[this.props.domain.hash] !== undefined;
     if (!this.wens) return;
 
     return (
-      <div className="max-w-screen-md m-auto flex w-full md:flex-row md:items-start">
+      <div className="max-w-screen-lg m-auto flex w-full md:flex-row md:items-start">
         <components.Modal ref={(ref) => (this.dataExplorerModal = ref)}>
           <components.DataExplorer data={this.state.dataExplorer} />
         </components.Modal>
         <components.Modal
-          title={"Set C-Chain / EVM Reverse Record"}
+          title={"Set as Primary"}
           ref={(ref) => (this.setEVMReverseRecordModal = ref)}
         >
           <SetEVMReverseRecord
@@ -282,128 +252,23 @@ class Domain extends React.PureComponent {
             resolver={this.props.resolver}
           />
         </components.Modal>
-        <components.Modal
-          title={"Switch to Standard Privacy"}
-          ref={(ref) => (this.revealDomainModal = ref)}
-        >
-          {this.props.isRevealComplete ? (
-            <div className="max-w-md m-auto">
-              <div className="my-8">
-                <components.labels.Success
-                  text={"Your domain has been switched to Standard Privacy"}
-                />
-              </div>
-              <div className="">
-                <components.buttons.Button
-                  text={"Close"}
-                  onClick={() => this.revealDomainModal.toggle()}
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="max-w-md m-auto text-gray-700">
-              <components.labels.Warning
-                text={
-                  "Switching to Standard Privacy reveals your domain name on-chain. This action cannot be reversed."
-                }
-              />
-              <a
-                className="flex items-center justify-center my-4 bg-gray-100 dark:bg-gray-800 dark:text-white p-4 rounded-lg text-center"
-                href="https://wens.domains/docs/privacy-features-registrations/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Read about privacy features{" "}
-                <ExternalLinkIcon className="ml-4 text-gray-400 dark:text-gray-100 w-6" />
-              </a>
-              <components.buttons.Button
-                text="Switch to Standard Privacy"
-                onClick={() => this.props.revealDomain(this.state.domain)}
-                loading={this.props.isRevealingDomain}
-              />
-            </div>
-          )}
-        </components.Modal>
-        <components.Modal
-          title={"Connect Wallet"}
-          ref={(ref) => (this.connectModal = ref)}
-        >
-          <components.ConnectWallet />
-        </components.Modal>
+
         <div className="w-full">
-          <div className="bg-gray-100 rounded-xl w-full relative p-4 md:p-8 dark:bg-gray-800 w-full">
-            <div className="flex justify-between items-center">
-              <div className="font-bold">{"Basic Information"}</div>
-              {!this.state.connected ? (
-                <components.buttons.Button
-                  sm={true}
-                  text="Connect"
-                  onClick={() => this.connectModal.toggle()}
-                />
-              ) : null}
+          <div className="flex lg:flex-row md:flex-col flex-col justify-center  gap-3">
+            <div className="bg-gray-100 rounded-xl relative p-0 md:p-2 dark:bg-gray-800">
+              <components.NFTCard name={this.state.domain} />
             </div>
-            <div
-              className="w-full bg-gray-300 dark:bg-gray-700 mt-4"
-              style={{ height: "1px" }}
-            ></div>
-            <div className="mt-4 text-sm">
-              <div className="font-bold">{"Registrant"}</div>
-              <div className="truncate flex items-center flex-wrap">
-                <div
-                  className="flex items-center cursor-pointer w-full sm:w-auto"
-                  onClick={() => {
-                    this.setState({
-                      dataExplorer: {
-                        title: "View on Block Explorer",
-                        data: this.props.domain.owner,
-                        dataType: this.wens.RECORDS.EVM,
-                      },
-                    });
-                    this.dataExplorerModal.toggle();
-                  }}
-                >
-                  <div className="truncate">{this.props.domain.owner}</div>
-                  <ExternalLinkIcon className="w-4 ml-2 flex-shrink-0" />
-                </div>
-                {this.state.connected && isOwned ? (
-                  <components.buttons.Transparent
-                    onClick={() => {
-                      this.props.resetTransferDomain();
-                      this.transferDomainModal.toggle();
-                    }}
-                  >
-                    <div className="sm:ml-2 inline-block cursor-pointer text-alert-blue underline">
-                      Transfer
-                    </div>
-                  </components.buttons.Transparent>
-                ) : null}
+            <div className="bg-gray-100 rounded-xl w-full relative py-2 px-4 md:py-2 md:px-8 dark:bg-gray-800 w-full">
+              <div className="flex justify-between items-center">
+                <div className="font-bold">{"Basic Information"}</div>
               </div>
-            </div>
-            <div className="mt-4 text-sm">
-              <div className="font-bold">{"Resolver"}</div>
-              <div className="truncate flex items-center">
-                {this.props.resolver ? (
-                  <div>
-                    {this.props.resolver.resolver === this.state.defaultResolver
-                      ? "Default Resolver"
-                      : "Unknown Resolver"}
-                  </div>
-                ) : (
-                  <div>Not set</div>
-                )}
-                {this.state.connected && isOwned ? (
-                  <components.buttons.Transparent onClick={this.setResolver}>
-                    <div className="ml-2 inline-block cursor-pointer text-alert-blue underline">
-                      Set Resolver
-                    </div>
-                  </components.buttons.Transparent>
-                ) : null}
-              </div>
-            </div>
-            <div className="mt-4 text-sm">
-              <div className="font-bold">{"Primary"}</div>
-              <div className="truncate flex items-center flex-wrap">
-                {this.props.reverseRecords[this.wens.RECORDS.EVM] ? (
+              <div
+                className="w-full bg-gray-300 dark:bg-gray-700 mt-4"
+                style={{ height: "1px" }}
+              ></div>
+              <div className="mt-4 text-sm">
+                <div className="font-bold">{"Registrant"}</div>
+                <div className="truncate flex items-center flex-wrap">
                   <div
                     className="flex items-center cursor-pointer w-full sm:w-auto"
                     onClick={() => {
@@ -420,23 +285,81 @@ class Domain extends React.PureComponent {
                     <div className="truncate">{this.props.domain.owner}</div>
                     <ExternalLinkIcon className="w-4 ml-2 flex-shrink-0" />
                   </div>
-                ) : (
-                  <div>Not set</div>
-                )}
-                {this.state.connected && isOwned ? (
-                  <components.buttons.Transparent
-                    onClick={() => {
-                      this.setEVMReverseRecordModal.toggle();
-                    }}
-                  >
-                    <div className="ml-2 inline-block cursor-pointer text-alert-blue underline">
-                      Set as Primary
+                  {this.state.connected && isOwned ? (
+                    <components.buttons.Transparent
+                      onClick={() => {
+                        this.props.resetTransferDomain();
+                        this.transferDomainModal.toggle();
+                      }}
+                    >
+                      <div className="sm:ml-2 inline-block cursor-pointer text-alert-blue underline">
+                        Transfer
+                      </div>
+                    </components.buttons.Transparent>
+                  ) : null}
+                </div>
+              </div>
+              <div className="mt-4 text-sm">
+                <div className="font-bold">{"Resolver"}</div>
+                <div className="truncate flex items-center">
+                  {this.props.resolver ? (
+                    <div>
+                      {this.props.resolver.resolver ===
+                      this.state.defaultResolver
+                        ? "Default Resolver"
+                        : "Unknown Resolver"}
                     </div>
-                  </components.buttons.Transparent>
-                ) : null}
+                  ) : (
+                    <div>Not set</div>
+                  )}
+                  {this.state.connected && isOwned ? (
+                    <components.buttons.Transparent onClick={this.setResolver}>
+                      <div className="ml-2 inline-block cursor-pointer text-alert-blue underline">
+                        Set Resolver
+                      </div>
+                    </components.buttons.Transparent>
+                  ) : null}
+                </div>
+              </div>
+              <div className="mt-4 text-sm">
+                <div className="font-bold">{"Primary"}</div>
+                <div className="truncate flex items-center flex-wrap">
+                  {this.props.reverseRecords[this.wens.RECORDS.EVM] ? (
+                    <div
+                      className="flex items-center cursor-pointer w-full sm:w-auto"
+                      onClick={() => {
+                        this.setState({
+                          dataExplorer: {
+                            title: "View on Block Explorer",
+                            data: this.props.domain.owner,
+                            dataType: this.wens.RECORDS.EVM,
+                          },
+                        });
+                        this.dataExplorerModal.toggle();
+                      }}
+                    >
+                      <div className="truncate">{this.props.domain.owner}</div>
+                      <ExternalLinkIcon className="w-4 ml-2 flex-shrink-0" />
+                    </div>
+                  ) : (
+                    <div>Not set</div>
+                  )}
+                  {this.state.connected && isOwned ? (
+                    <components.buttons.Transparent
+                      onClick={() => {
+                        this.setEVMReverseRecordModal.toggle();
+                      }}
+                    >
+                      <div className="ml-2 inline-block cursor-pointer text-alert-blue underline">
+                        Set as Primary
+                      </div>
+                    </components.buttons.Transparent>
+                  ) : null}
+                </div>
               </div>
             </div>
           </div>
+
           <div className="mt-4 bg-gray-100 rounded-xl w-full relative p-4 md:p-8 dark:bg-gray-800 w-full">
             <div className="flex justify-between items-center">
               <div className="font-bold">{"Records"}</div>
@@ -579,7 +502,7 @@ class Domain extends React.PureComponent {
         : false;
     return (
       <div>
-        <div className="flex justify-between max-w-screen-md m-auto items-center mt-2 md:mt-8 mb-4">
+        <div className="flex justify-between max-w-screen-lg m-auto items-center mt-2 md:mt-8 mb-4 bg-gray-100 p-4 rounded-xl">
           <Link to={services.linking.path("MyDomains")}>
             {!this.props.isLoading && isOwned ? (
               <ArrowLeftIcon className="w-6" />

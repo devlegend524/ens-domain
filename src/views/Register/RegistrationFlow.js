@@ -126,7 +126,7 @@ class RegistrationFlow extends React.PureComponent {
               <Button
                 variant="gradient"
                 ripple={true}
-                color="blue"
+                color="blue-gray"
                 onClick={() => this.setState({ hasProofs: true })}
                 disabled={this.props.progress.percent < 100}
               >
@@ -144,7 +144,7 @@ class RegistrationFlow extends React.PureComponent {
               <Button
                 variant="gradient"
                 ripple={true}
-                color="green"
+                color="blue-gray"
                 disabled={!this.state.hasProofs}
                 onClick={this.finalizeTransaction.bind(this)}
               >
@@ -179,7 +179,7 @@ class RegistrationFlow extends React.PureComponent {
               <Button
                 variant="gradient"
                 ripple={true}
-                color="blue"
+                color="blue-gray"
                 onClick={this.viewDomain.bind(this)}
               >
                 {"View my domains"}
