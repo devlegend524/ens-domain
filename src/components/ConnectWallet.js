@@ -153,7 +153,10 @@ class ConnectWallet extends React.PureComponent {
           />
         </div>
         <div className="mt-4 max-w-sm m-auto">
-          <components.buttons.Button
+          <components.buttons.CustomButton
+            variant="gradient"
+            ripple={true}
+            color="blue-gray"
             disabled={
               !this.state.terms || !this.state.privacy || !this.state.disputes
             }
@@ -191,9 +194,7 @@ class ConnectWallet extends React.PureComponent {
           "Coinbase Wallet"
         ),
         connect: () => {
-          this.connectMetamask.bind(this)(
-            (provider) => provider.isCoinbaseWallet
-          );
+          this.connectCore.bind(this)((provider) => provider.isCoinbaseWallet);
         },
         class: "h-14 w-14",
       },
@@ -219,8 +220,10 @@ class ConnectWallet extends React.PureComponent {
               <components.labels.Information text={"Connecting to wallet"} />
             </div>
             <div className="max-w-sm m-auto">
-              <components.buttons.Button
-                type="sm"
+              <components.buttons.CustomButton
+                variant="gradient"
+                ripple={true}
+                color="blue-gray"
                 text="Cancel connection"
                 onClick={this.reset.bind(this)}
               />
@@ -251,7 +254,11 @@ class ConnectWallet extends React.PureComponent {
                   <div className="text-sm text-gray-700">{wal.description}</div>
                 </div>
                 <div className="flex-none">
-                <img src={services.linking.static('images/angle-circle-right-icon.svg')} alt="arrow" className="w-5 h-5" />
+                  <img
+                    src={services.linking.static("images/right.svg")}
+                    alt="arrow"
+                    className="w-5 h-5"
+                  />
                 </div>
               </div>
             ))}
@@ -265,7 +272,6 @@ class ConnectWallet extends React.PureComponent {
 const mapStateToProps = (state) => ({
   injectSentry: services.user.selectors.injectSentry(state),
   hasAcceptedDisclaimers: services.user.selectors.hasAcceptedDisclaimers(state),
-  isDarkmode: services.darkmode.selectors.isDarkmode(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -77,24 +77,26 @@ const actions = {
     };
   },
 
-  generateProofs: names => {
+  registerDomain: names => {
     return async (dispatch, getState) => {
       try {
+        dispatch(actions.setIsFinalizing(true));
         const api = services.provider.buildAPI();
         const state = getState();
         const constraintsProofs = services.proofs.selectors.constraintsProofs(
           state
         );
         const pricingProofs = services.proofs.selectors.pricingProofs(state);
+        const quantities = services.cart.selectors.quantities(state);
+
         let j = 0;
-        const numSteps = names.length * 2;
+        const numSteps = names.length * 2 + 1;
         for (let i = 0; i < names.length; i += 1) {
           let name = names[i];
           if (!pricingProofs[name]) {
             dispatch(
               actions.setProgress({
-                message: `Generating pricing proof for ${name} (${j +
-                  1}/${numSteps})`,
+                message: `Checking price for ${name} (${j + 1}/${numSteps})`,
                 percent: parseInt(j / numSteps * 100)
               })
             );
@@ -107,7 +109,7 @@ const actions = {
           if (!constraintsProofs[name]) {
             dispatch(
               actions.setProgress({
-                message: `Generating constraints proof for ${name} (${j +
+                message: `Checking constraints for ${name} (${j +
                   1}/${numSteps})`,
                 percent: parseInt(j / numSteps * 100)
               })
@@ -124,39 +126,22 @@ const actions = {
         }
         dispatch(
           actions.setProgress({
-            message: `Done`,
-            percent: 100
+            message: `Registering Domain (${j + 1}/${numSteps})`,
+            percent: parseInt(j / numSteps * 100)
           })
         );
-      } catch (err) {
-        console.log(err);
-        dispatch(actions.setHasError(true));
-      }
-    };
-  },
+        j += 1;
 
-  finalize: () => {
-    return async (dispatch, getState) => {
-      try {
-        dispatch(actions.setIsFinalizing(true));
-        const state = getState();
-        const api = services.provider.buildAPI();
-        let names = services.cart.selectors.names(state);
-        const _quantities = services.cart.selectors.quantities(state);
-        const _constraintsProofs = services.proofs.selectors.constraintsProofs(
-          state
-        );
-        const _pricingProofs = services.proofs.selectors.pricingProofs(state);
-        let quantities = [];
-        let pricingProofs = [];
-        let constraintsProofs = [];
+        let _quantities = [];
+        let _pricingProofs = [];
+        let _constraintsProofs = [];
         if (names.length > services.environment.MAX_REGISTRATION_NAMES) {
           names = names.slice(0, services.environment.MAX_REGISTRATION_NAMES);
         }
         names.forEach(name => {
-          quantities.push(_quantities[name]);
-          pricingProofs.push(_pricingProofs[name]);
-          constraintsProofs.push(_constraintsProofs[name]);
+          _quantities.push(quantities[name]);
+          _pricingProofs.push(pricingProofs[name]);
+          _constraintsProofs.push(constraintsProofs[name]);
         });
 
         const preimages = await api.buildPreimages(names);
@@ -172,21 +157,16 @@ const actions = {
 
         dispatch(actions.setIsComplete(true));
         dispatch(actions.setIsFinalizing(false));
+        dispatch(
+          actions.setProgress({
+            message: `Done`,
+            percent: 100
+          })
+        );
       } catch (err) {
-        if (err.code === 4001) {
-          dispatch(actions.setIsFinalizing(false));
-          return; // user rejected transaction, give them another chance
-        }
-        services.logger.error(err);
+        console.log(err);
         dispatch(actions.setHasError(true));
       }
-    };
-  },
-
-  enableEnhancedPrivacy: value => {
-    return {
-      type: constants.ENABLE_ENHANCED_PRIVACY,
-      value
     };
   }
 };

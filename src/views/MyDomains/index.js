@@ -94,7 +94,10 @@ class MyDomains extends React.PureComponent {
             />
           </div>
         )}
-        <components.buttons.Button
+        <components.buttons.CustomButton
+          variant="gradient"
+          ripple={true}
+          color="blue-gray"
           text={"Return to domain list"}
           onClick={() => this.hiddenDomainsModal.toggle()}
         />
@@ -144,9 +147,7 @@ class MyDomains extends React.PureComponent {
               <div class="grid sm:flex sm:justify-center sm:flex-col sm:items-center md:grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-2 sm:gap-4 md:gap-2">
                 {domains.map((hash, index) => {
                   const domain = reverseLookups[hash];
-                  return (
-                    <components.NFTCard name={domain} isLinked={true} />
-                  );
+                  return <components.NFTCard name={domain} isLinked={true} />;
                 })}
               </div>
             ) : (
@@ -168,23 +169,6 @@ class MyDomains extends React.PureComponent {
         />
         <div className="mt-8">
           <components.DomainSearch />
-        </div>
-      </div>
-    );
-  }
-
-  renderNotConnected() {
-    return (
-      <div className="max-w-md m-auto mt-8">
-        <div className="text-center text-lg font-bold mb-4">{"My Domains"}</div>
-        <components.labels.Information
-          text={"You must be connected to a wallet to view your domains"}
-        />
-        <div className="mt-8">
-          <components.buttons.Button
-            text={"Connect your wallet"}
-            onClick={() => this.connectModal.toggle()}
-          />
         </div>
       </div>
     );
@@ -238,12 +222,6 @@ class MyDomains extends React.PureComponent {
     }
     return (
       <div className="max-w-screen-xl m-auto md:px-4">
-        <components.Modal
-          ref={(ref) => (this.connectModal = ref)}
-          title={"Connect your wallet"}
-        >
-          <components.ConnectWallet />
-        </components.Modal>
         <components.Modal
           ref={(ref) => (this.hiddenDomainsModal = ref)}
           title={"Hidden Domains"}

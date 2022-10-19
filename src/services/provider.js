@@ -110,11 +110,7 @@ const provider = {
   connectWalletConnect: () => {
     return new Promise(async (resolve, reject) => {
       _provider = new WalletConnectProvider({
-        rpc: {
-          31337: "http://localhost:8545",
-          43113: "https://api.weth-test.network/ext/bc/C/rpc",
-          43114: "https://api.weth.network/ext/bc/C/rpc"
-        }
+        infuraId: "43a5d6ed07a140288e17955ddde82ae1"
       });
       await _provider.enable().catch(reject);
       const web3Provider = new ethers.providers.Web3Provider(_provider);
@@ -288,12 +284,12 @@ const provider = {
     return new Promise(async (resolve, reject) => {
       const handleChanged = () => {
         window.ethereum.off("accountsChanged", handleChanged);
-        provider.connectMetamask(provider => provider.isAvalanche);
+        provider.connectMetamask(provider => provider.isEthereum);
         resolve();
       };
       window.ethereum.on("accountsChanged", handleChanged);
       provider.connectMetamask(
-        provider => provider.isAvalanche,
+        provider => provider.isEthereum,
         CONNECTION_TYPES.CORE
       );
     });
