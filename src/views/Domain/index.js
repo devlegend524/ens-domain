@@ -255,10 +255,10 @@ class Domain extends React.PureComponent {
 
         <div className="w-full">
           <div className="flex lg:flex-row md:flex-col flex-col justify-center  gap-3">
-            <div className="bg-gray-100 rounded-xl relative p-0 md:p-2 dark:bg-gray-800">
+            <div className=" rounded-xl relative p-0 md:p-2 bg-gray-100 dark:bg-gray-800">
               <components.NFTCard name={this.state.domain} />
             </div>
-            <div className="bg-gray-100 rounded-xl w-full relative py-2 px-4 md:py-2 md:px-8 dark:bg-gray-800 w-full">
+            <div className=" rounded-xl w-full relative py-2 px-4 md:py-2 md:px-8 dark:bg-gray-800 w-full">
               <div className="flex justify-between items-center">
                 <div className="font-bold">{"Basic Information"}</div>
               </div>
@@ -360,16 +360,22 @@ class Domain extends React.PureComponent {
             </div>
           </div>
 
-          <div className="mt-4 bg-gray-100 rounded-xl w-full relative p-4 md:p-8 dark:bg-gray-800 w-full">
+          <div className="mt-4  rounded-xl w-full relative p-4 md:p-8 dark:bg-gray-800 w-full">
             <div className="flex justify-between items-center">
-              <div className="font-bold">{"Records"}</div>
-              {!this.state.connected ? (
-                <components.buttons.Button
-                  sm={true}
-                  text="Connect"
-                  onClick={() => this.connectModal.toggle()}
-                />
-              ) : null}
+              <div className="font-bold">
+                {"Records"}
+                {this.props.resolver ? (
+                  <span className="text-green-500 mx-4">
+                    {this.props.resolver.resolver === this.state.defaultResolver
+                      ? "Default Resolver"
+                      : "Unknown Resolver"}
+                  </span>
+                ) : (
+                  <span className="text-red-500 mx-4">
+                    Set Resolver to set records
+                  </span>
+                )}
+              </div>
             </div>
             <div
               className="w-full bg-gray-300 dark:bg-gray-700 mt-4"
@@ -379,83 +385,82 @@ class Domain extends React.PureComponent {
               <div className="mt-4 w-full text-center">
                 <components.Spinner />
               </div>
-            ) : this.props.records.length === 0 ? (
-              <div className="mt-4 text-sm flex items-center">
-                <div>{"No records have been set."}</div>
-                {this.state.connected && isOwned ? (
-                  this.props.resolver ? (
-                    <div
-                      onClick={() => this.showSetRecord()}
-                      className="ml-2 text-alert-blue underline cursor-pointer"
-                    >
-                      {"Add a record"}
-                    </div>
-                  ) : (
-                    <div className="flex items-center">
-                      <div
-                        onClick={this.setResolver}
-                        className="ml-2 text-alert-blue underline cursor-pointer"
-                      >
-                        {"Set a resolver"}
-                      </div>
-                      <div>&nbsp;{"to set records."}</div>
-                    </div>
-                  )
-                ) : null}
-              </div>
             ) : (
-              <div>
-                {this.props.records.map((record, index) => (
-                  <div className="mt-4" key={index}>
-                    <div className="text-sm font-bold">{record.label}</div>
+              <div className="mx-auto md:grid md:grid-rows-5 md:grid-flow-col gap-4">
+                {this.wens?.RECORDS._LIST.map((record, index) => (
+                  <div className="mt-4 flex flex-col md:flex-row gap-4" key={index}>
+                    <div className="text-sm font-bold  w-full max-w-[200px]">{record.label}</div>
                     <div
                       className="text-sm flex items-center cursor-pointer w-full"
                       onClick={() => {
                         this.setState({
                           dataExplorer: {
-                            data: record.value,
+                            data:
+                              this.props.records.filter(
+                                (rec) => rec.label === record.label
+                              ).length > 0
+                                ? this.props.records.filter(
+                                    (rec) => rec.label === record.label
+                                  )[0].value
+                                : "",
                             dataType: record.key,
                           },
                         });
                         this.dataExplorerModal.toggle();
                       }}
                     >
-                      <div className="truncate">{record.value}</div>
+                      <div className="truncate">
+                        {this.props.records.filter(
+                          (rec) => rec.label === record.label
+                        ).length > 0
+                          ? this.props.records.filter(
+                              (rec) => rec.label === record.label
+                            )[0].value
+                          : "Not Set"}
+                      </div>
                       <ExternalLinkIcon className="w-4 ml-2 pb-1 flex-shrink-0" />
                       {this.state.connected && isOwned ? (
                         <div className="flex items-center">
                           <div
                             onClick={(e) => {
                               e.stopPropagation();
-                              this.showSetRecord(record.key, record.value);
+                              this.showSetRecord(
+                                record.key,
+                                this.props.records.filter(
+                                  (rec) => rec.label === record.label
+                                ).length > 0
+                                  ? this.props.records.filter(
+                                      (rec) => rec.label === record.label
+                                    )[0].value
+                                  : ""
+                              );
                             }}
                             className="ml-2 text-alert-blue underline cursor-pointer"
                           >
-                            {"Edit"}
+                            {this.props.records.filter(
+                              (rec) => rec.label === record.label
+                            ).length > 0
+                              ? "Edit"
+                              : "Set"}
                           </div>
-                          <div
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              this.showDeleteRecord(record.key, record.value);
-                            }}
-                            className="ml-2 text-alert-blue underline cursor-pointer"
-                          >
-                            {"Delete"}
-                          </div>
+                          {this.props.records.filter(
+                            (rec) => rec.label === record.label
+                          ).length > 0 && (
+                            <div
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                this.showDeleteRecord(record.key, record.value);
+                              }}
+                              className="ml-2 text-alert-blue underline cursor-pointer"
+                            >
+                              {"Delete"}
+                            </div>
+                          )}
                         </div>
                       ) : null}
                     </div>
                   </div>
                 ))}
-                {this.state.connected && this.props.resolver && isOwned ? (
-                  <div className="mt-4 flex">
-                    <components.buttons.Button
-                      sm={true}
-                      onClick={() => this.showSetRecord()}
-                      text="Add a record"
-                    />
-                  </div>
-                ) : null}
               </div>
             )}
           </div>
