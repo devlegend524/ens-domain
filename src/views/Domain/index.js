@@ -1,10 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { CheckCircleIcon, ExternalLinkIcon } from "@heroicons/react/solid";
+import { ExternalLinkIcon } from "@heroicons/react/solid";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
-import { ethers } from "ethers";
-
 import services from "services";
 import components from "components";
 
@@ -16,6 +14,7 @@ import actions from "./actions";
 import constants from "./constants";
 import reducer from "./reducer";
 import selectors from "./selectors";
+import './index.css'
 
 class Domain extends React.PureComponent {
   constructor(props) {
@@ -155,21 +154,44 @@ class Domain extends React.PureComponent {
 
   renderAvailableBody() {
     return (
-      <div className="max-w-md m-auto">
-        <div className="max-w-sm m-auto mt-4 flex items-center justify-center">
-          <CheckCircleIcon className="w-6 text-alert-blue mr-2" />
-          <div className="text-alert-blue">{"Available for registration"}</div>
-        </div>
-        {services.environment.REGISTRATIONS_ENABLED ? (
-          <div className="mt-4">
-            <components.buttons.Button
-              text={"Register this name"}
-              onClick={(navigator) => this.addToCart(navigator)}
-            />
+      <div className="max-w-screen-lg m-auto">
+        <div className="flex lg:flex-row md:flex-col flex-col justify-center  gap-3">
+          <div className=" rounded-xl relative p-0 md:p-2 bg-gray-100 dark:bg-gray-800">
+            <components.NFTCard name={this.state.domain} />
           </div>
-        ) : null}
-        <div className="mt-4">
-          <components.DomainSearch placeholder={this.searchPlaceholder} />
+          <div className=" rounded-xl w-full relative py-2 px-4 md:py-2 md:px-8 dark:bg-gray-800 w-full">
+            <div className="flex justify-between items-center">
+              <div className="font-bold">{"Domain Information"}</div>
+            </div>
+            <div
+              className="w-full bg-gray-300 dark:bg-gray-700 mt-4"
+              style={{ height: "1px" }}
+            ></div>
+            <div className="max-w-sm m-auto mt-4 flex flex-col items-center justify-center">
+              <div className="text-gray-800 font-bold my-9">
+                {"This Domain is available for registration"}
+              </div>
+              <div className="flex justify-center items-center">
+                <svg class="arrows">
+                  <path className="a1" d="M0 0 L15 12 L30 0"></path>
+                  <path className="a2" d="M0 10 L15 22 L30 10"></path>
+                  <path className="a3" d="M0 20 L15 32 L30 20"></path>
+                </svg>
+              </div>
+            </div>
+            {services.environment.REGISTRATIONS_ENABLED ? (
+              <div className="mt-4">
+                <components.buttons.CustomButton
+                  variant="filled"
+                  color="cyan"
+                  ripple={true}
+                  fullWidth={true}
+                  text={"Register Now"}
+                  onClick={(navigator) => this.addToCart(navigator)}
+                />                  
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
     );
@@ -388,8 +410,13 @@ class Domain extends React.PureComponent {
             ) : (
               <div className="mx-auto md:grid md:grid-rows-5 md:grid-flow-col gap-4">
                 {this.wens?.RECORDS._LIST.map((record, index) => (
-                  <div className="mt-4 flex flex-col md:flex-row gap-4" key={index}>
-                    <div className="text-sm font-bold  w-full max-w-[200px]">{record.label}</div>
+                  <div
+                    className="mt-4 flex flex-col md:flex-row gap-4"
+                    key={index}
+                  >
+                    <div className="text-sm font-bold  w-full max-w-[200px]">
+                      {record.label}
+                    </div>
                     <div
                       className="text-sm flex items-center cursor-pointer w-full"
                       onClick={() => {

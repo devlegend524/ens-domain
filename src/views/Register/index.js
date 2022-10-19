@@ -3,14 +3,11 @@ import { connect } from "react-redux";
 import { Button } from "@material-tailwind/react";
 import services from "services";
 import components from "components";
-import { createCanvas, loadImage, parseFont } from "canvas";
 
 import actions from "./actions";
 import constants from "./constants";
 import reducer from "./reducer";
 import selectors from "./selectors";
-
-import RegistrationFlow from "./RegistrationFlow";
 
 class Register extends React.PureComponent {
   constructor(props) {
@@ -20,8 +17,11 @@ class Register extends React.PureComponent {
       connected: services.provider.isConnected(),
       importingRegistrations: false,
       startPurchase: false,
+      needsProofs: true,
+      hasProofs: false,
     };
   }
+
   componentDidMount() {
     services.linking.addEventListener("Domain", this.updateParams);
     services.provider.addEventListener(
@@ -67,12 +67,11 @@ class Register extends React.PureComponent {
     });
   }
 
-  incrementQuantity(name) {
-    this.props.incrementQuantity(name);
-  }
+  registerDomain() {}
 
-  decrementQuantity(name) {
-    this.props.decrementQuantity(name);
+  viewDomain() {
+    this.props.clear();
+    location.href = services.linking.path("MyDomains");
   }
 
   removeFromCart(name) {
@@ -100,9 +99,16 @@ class Register extends React.PureComponent {
 
   startPurchase() {
     this.props.resetRegistration();
-    this.setState({
-      startPurchase: true,
-    });
+
+    this.setState(
+      {
+        needsProofs: false,
+        startPurchase: true,
+      },
+      () => {
+        this.props.registerDomain(this.props.names);
+      }
+    );
   }
 
   renderNotAvailable(name, status) {
@@ -112,17 +118,6 @@ class Register extends React.PureComponent {
       </div>
     );
   }
-
-  initBulkRegistrations = () => {
-    this.setState(
-      {
-        importingRegistrations: false,
-      },
-      () => {
-        this.bulkModal.toggle();
-      }
-    );
-  };
 
   renderName(name, index) {
     const nameData = this.props.nameData[name];
@@ -220,7 +215,10 @@ class Register extends React.PureComponent {
             }  no longer available for registration.`}
           />
           <div className="mt-8 max-w-sm m-auto">
-            <components.buttons.Button
+            <components.buttons.CustomButton
+              variant="gradient"
+              ripple={true}
+              color="blue-gray"
               text={"Continue"}
               onClick={() => this.removeUnavailable()}
             />
@@ -234,17 +232,23 @@ class Register extends React.PureComponent {
           <div className="w-full m-auto">
             <div className="m-auto mb-8">
               <div className="border-b border-gray-400 pb-4 mb-4">
-                <div className="text-lg font-bold">
-                  {"Step 1: Purchase Summary"}
+                <div className="text-lg font-bold">{"Purchase Summary"}</div>
+              </div>
+              <div className="flex flex-col justify-center items-center">
+                <div className="max-w-sm w-full mt-5">
+                  <div className="flex justify-between mb-4">
+                    <div className="font-bold">{"Price in USD"}</div>
+                    <div className="text-red-500">
+                      {services.money.renderUSD(total.usd)}
+                    </div>
+                  </div>
+                  <div className="flex justify-between">
+                    <div className="font-bold">{"Total (ETH)"}</div>
+                    <div className="text-blue-500">
+                      {services.money.renderWETH(total.weth)}
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-between mb-4">
-                <div className="font-bold">{"Price in USD"}</div>
-                <div className="">{services.money.renderUSD(total.usd)}</div>
-              </div>
-              <div className="flex justify-between">
-                <div className="font-bold">{"Total (ETH)"}</div>
-                <div className="">{services.money.renderWETH(total.weth)}</div>
               </div>
             </div>
             {this.props.balance.lt(total.weth) ? (
@@ -279,6 +283,58 @@ class Register extends React.PureComponent {
           </div>
         </>
       );
+  }
+
+  renderComplete() {
+    return (
+      <>
+        <div className="font-bold border-b border-gray-400 pb-4 mb-4 mt-5">
+          {"Registration Complete"}
+        </div>
+        <>
+          <components.labels.Success
+            text={"Your registration was successful."}
+          />
+          <div className="mt-8 max-w-sm m-auto flex justify-center">
+            <div className="mt-4">
+              <Button
+                variant="gradient"
+                ripple={true}
+                color="blue-gray"
+                onClick={this.viewDomain.bind(this)}
+              >
+                {"View my domains"}
+              </Button>
+            </div>
+          </div>
+        </>
+      </>
+    );
+  }
+
+  renderHasError() {
+    return (
+      <>
+        <div className="font-bold border-b border-gray-400 pb-4 mb-4">
+          {"Error"}
+        </div>
+        <components.labels.Error
+          text={
+            "Failed to register domain. Please reload the page and try again."
+          }
+        />
+        <div className="mt-8 max-w-sm m-auto">
+          <Button
+            variant="gradient"
+            ripple={true}
+            color="gray"
+            onClick={() => window.location.reload()}
+          >
+            {"Reload page"}
+          </Button>
+        </div>
+      </>
+    );
   }
 
   renderBody() {
@@ -327,15 +383,21 @@ class Register extends React.PureComponent {
         <div className="text-lg font-bold pl-2 mt-8 border-b border-gray-400 pb-4">
           {"Register New Domain"}
         </div>
+        {this.state.startPurchase ? (
+          <div className="w-full m-auto">
+            <components.ProgressBar progress={this.props.progress.percent} />
+          </div>
+        ) : (
+          ""
+        )}
         <div className="flex flex-col md:flex-row justify-between gap-4">
           <div className="flex flex-col mt-2 md:mt-8 p-3 w-full max-w-sm  flex-none">
             {names.map(this.renderName.bind(this))}
           </div>
           <div className=" mt-8 w-full p-3">
-            {this.renderNames()}
-            <div className="mt-4">
-              <RegistrationFlow startPurchase={this.state.startPurchase} />
-            </div>
+            {!this.props.isComplete && this.renderNames()}
+            {this.props.isComplete && this.renderComplete()}
+            {this.props.hasError && this.renderHasError()}
           </div>
         </div>
       </>
@@ -348,7 +410,6 @@ class Register extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  isComplete: selectors.isComplete(state),
   names: services.cart.selectors.names(state),
   nameData: services.cart.selectors.nameData(state),
   quantities: services.cart.selectors.quantities(state),
@@ -361,6 +422,14 @@ const mapStateToProps = (state) => ({
     state
   ),
   balance: selectors.balance(state),
+  pricingProofs: services.proofs.selectors.pricingProofs(state),
+  constraintsProofs: services.proofs.selectors.constraintsProofs(state),
+  hasCommit: selectors.hasCommit(state),
+  hasError: selectors.hasError(state),
+  isComplete: selectors.isComplete(state),
+  isCommitting: selectors.isCommitting(state),
+  isFinalizing: selectors.isFinalizing(state),
+  progress: selectors.progress(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -368,14 +437,10 @@ const mapDispatchToProps = (dispatch) => ({
   loadBalance: () => dispatch(actions.loadBalance()),
   removeFromCart: (name) =>
     dispatch(services.cart.actions.removeFromCart(name)),
-  incrementQuantity: (name) =>
-    dispatch(services.cart.actions.incrementQuantity(name)),
-  decrementQuantity: (name) =>
-    dispatch(services.cart.actions.decrementQuantity(name)),
   refreshNameData: () => dispatch(services.cart.actions.refreshAllNameData()),
   resetRegistration: () => dispatch(actions.reset()),
-  addBulkRegistrations: (registrations) =>
-    dispatch(services.cart.actions.addBulkRegistrations(registrations)),
+  registerDomain: (names) => dispatch(actions.registerDomain(names)),
+  nextBatch: () => dispatch(actions.reset()),
   clear: () => dispatch(services.cart.actions.clear()),
 });
 
