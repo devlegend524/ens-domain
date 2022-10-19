@@ -20,7 +20,7 @@ const fonts = {
   site: "bold 15pt Franklin Gothic Medium",
 };
 
-export default function NFTCard({ name, isLinked }) {
+export default function NFTCard({ name, isLinked, classes }) {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -75,15 +75,15 @@ export default function NFTCard({ name, isLinked }) {
     <>
       {isLinked ? (
         <Link
-          className="inline-block m-4"
+          className={`inline-block ${classes ? classes : ""}`}
           to={`/domains/${name}`}
-          >
+        >
           <canvas id="myCanvas" width="300" height="300" ref={canvasRef}>
             Your browser does not support the HTML canvas tag.
           </canvas>
         </Link>
       ) : (
-        <div className="inline-block m-4">
+        <div className="inline-block">
           <canvas id="myCanvas" width="300" height="300" ref={canvasRef}>
             Your browser does not support the HTML canvas tag.
           </canvas>
