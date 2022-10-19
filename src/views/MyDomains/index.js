@@ -144,10 +144,10 @@ class MyDomains extends React.PureComponent {
             </div>
 
             {domains.length > 0 ? (
-              <div class="grid sm:flex sm:justify-center sm:flex-col sm:items-center md:grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-2 sm:gap-4 md:gap-2">
+              <div className="grid sm:flex sm:justify-center sm:flex-col sm:items-center md:grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-2 sm:gap-4 md:gap-2">
                 {domains.map((hash, index) => {
                   const domain = reverseLookups[hash];
-                  return <components.NFTCard name={domain} isLinked={true} />;
+                  return <components.NFTCard name={domain} isLinked={true} key={index} />;
                 })}
               </div>
             ) : (

@@ -40,17 +40,12 @@ class TransferDomain extends React.PureComponent {
     return (
       <>
         <div className="max-w-md m-auto">
-          <components.labels.Information
-            text={
-              "This will transfer the domain registration of " +
-              this.props.domain +
-              " to a new owner."
-            }
-          />
-          <div className="font-bold mb-2 mt-4">New Owner</div>
+
+          <div className="font-bold mb-2 mt-4">New Owner Address</div>
           <components.Input
             value={this.state.newOwner}
             type="text"
+            placeholder="0x600bE5FcB9338BC3938e4***"
             onChange={(e) =>
               this.setState({
                 newOwner: e.target.value,
@@ -67,6 +62,7 @@ class TransferDomain extends React.PureComponent {
               variant="gradient"
               ripple={true}
               color="blue-gray"
+              fullWidth={true}
               sm={true}
               text={"Submit"}
               onClick={() => this.submit()}

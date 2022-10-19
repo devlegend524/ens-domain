@@ -147,9 +147,9 @@ const actions = {
         const preimages = await api.buildPreimages(names);
         await api.registerWithPreimage(
           names,
-          quantities,
-          constraintsProofs,
-          pricingProofs,
+          _quantities,
+          _constraintsProofs,
+          _pricingProofs,
           preimages
         );
 
@@ -166,6 +166,7 @@ const actions = {
       } catch (err) {
         console.log(err);
         dispatch(actions.setHasError(true));
+        dispatch(actions.setIsFinalizing(false));
       }
     };
   }

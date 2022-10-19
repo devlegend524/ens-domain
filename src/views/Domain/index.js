@@ -172,7 +172,7 @@ class Domain extends React.PureComponent {
                 {"This Domain is available for registration"}
               </div>
               <div className="flex justify-center items-center">
-                <svg class="arrows">
+                <svg className="arrows">
                   <path className="a1" d="M0 0 L15 12 L30 0"></path>
                   <path className="a2" d="M0 10 L15 22 L30 10"></path>
                   <path className="a3" d="M0 20 L15 32 L30 20"></path>
@@ -248,10 +248,10 @@ class Domain extends React.PureComponent {
         <components.Modal
           title={
             this.state.deleteRecordKey
-              ? "Delete Record"
+              ? 'Delete Record'
               : this.state.editRecordKey
-              ? "Edit Record"
-              : "Add Record"
+              ? 'Edit Record'
+              : 'Add Record'
           }
           ref={(ref) => (this.setRecordModal = ref)}
         >
@@ -411,7 +411,7 @@ class Domain extends React.PureComponent {
               <div className="mx-auto md:grid md:grid-rows-5 md:grid-flow-col gap-4">
                 {this.wens?.RECORDS._LIST.map((record, index) => (
                   <div
-                    className="mt-4 flex flex-col md:flex-row gap-4"
+                    className="mt-4 flex flex-col gap-4"
                     key={index}
                   >
                     <div className="text-sm font-bold  w-full max-w-[200px]">

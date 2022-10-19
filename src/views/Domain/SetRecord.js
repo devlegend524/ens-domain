@@ -55,16 +55,7 @@ class AddRecord extends React.PureComponent {
       <>
         <div className="max-w-md m-auto">
           <div className="font-bold mb-2">Type</div>
-          {this.getEditRecordType() ? (
-            <div>{this.getEditRecordType()}</div>
-          ) : (
-            <components.Select
-              key={this.state.initKey}
-              value={this.state.recordType}
-              options={this.state.options}
-              ref={(ref) => (this.selectRef = ref)}
-            />
-          )}
+          <div>{this.getEditRecordType()}</div>
           <div>
             <div className="font-bold mt-4 mb-2">Value</div>
             <input
