@@ -89,10 +89,21 @@ const actions = {
         const pricingProofs = services.proofs.selectors.pricingProofs(state);
         const quantities = services.cart.selectors.quantities(state);
 
+        if (names.length > services.environment.MAX_REGISTRATION_NAMES) {
+          names = names.slice(0, services.environment.MAX_REGISTRATION_NAMES);
+        }
+
         let j = 0;
         const numSteps = names.length * 2 + 1;
+
+        let _quantities = [];
+        let _pricingProofs = [];
+        let _constraintsProofs = [];
+
         for (let i = 0; i < names.length; i += 1) {
           let name = names[i];
+          console.log("quantities: ", quantities[name]);
+          _quantities.push(quantities[name]);
           if (!pricingProofs[name]) {
             dispatch(
               actions.setProgress({
@@ -104,6 +115,9 @@ const actions = {
             dispatch(
               services.proofs.actions.setPricingProof(name, pricingRes.calldata)
             );
+            _pricingProofs.push(pricingRes.calldata);
+          } else {
+            _pricingProofs.push(pricingProofs[name]);
           }
           j += 1;
           if (!constraintsProofs[name]) {
@@ -121,48 +135,39 @@ const actions = {
                 constraintsRes.calldata
               )
             );
-          }
-          j += 1;
-          dispatch(
-            actions.setProgress({
-              message: `Registering Domain (${j + 1}/${numSteps})`,
-              percent: parseInt(j / numSteps * 100)
-            })
-          );
-          j += 1;
-
-          let _quantities = [];
-          let _pricingProofs = [];
-          let _constraintsProofs = [];
-          if (names.length > services.environment.MAX_REGISTRATION_NAMES) {
-            names = names.slice(0, services.environment.MAX_REGISTRATION_NAMES);
-          }
-          names.forEach(name => {
-            _quantities.push(quantities[name]);
-            _pricingProofs.push(pricingProofs[name]);
+            _constraintsProofs.push(constraintsRes.calldata);
+          } else {
             _constraintsProofs.push(constraintsProofs[name]);
-          });
-
-          const preimages = await api.buildPreimages(names);
-          await api.registerWithPreimage(
-            names,
-            _quantities,
-            _constraintsProofs,
-            _pricingProofs,
-            preimages
-          );
-
-          await api.generateNFTImage(names);
-
-          dispatch(actions.setIsComplete(true));
-          dispatch(actions.setIsFinalizing(false));
-          dispatch(
-            actions.setProgress({
-              message: `Done`,
-              percent: 100
-            })
-          );
+          }
+          j += 1;
         }
+        dispatch(
+          actions.setProgress({
+            message: `Registering Domain (${j + 1}/${numSteps})`,
+            percent: parseInt(j / numSteps * 100)
+          })
+        );
+        j += 1;
+
+        const preimages = await api.buildPreimages(names);
+        await api.registerWithPreimage(
+          names,
+          _quantities,
+          _constraintsProofs,
+          _pricingProofs,
+          preimages
+        );
+
+        await api.generateNFTImage(names);
+
+        dispatch(actions.setIsComplete(true));
+        dispatch(actions.setIsFinalizing(false));
+        dispatch(
+          actions.setProgress({
+            message: `Done`,
+            percent: 100
+          })
+        );
       } catch (err) {
         console.log(err);
         dispatch(actions.setHasError(true));

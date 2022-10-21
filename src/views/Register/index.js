@@ -144,7 +144,7 @@ class Register extends React.PureComponent {
           </div>
         </div>
         <div className="mx-auto flex justify-center mt-5 bg-gray-100 p-2">
-          <components.NFTCard name={name} />
+          <components.NFTCard name={name} classes="animated_border" />
         </div>
       </div>
     );
@@ -261,28 +261,38 @@ class Register extends React.PureComponent {
               </div>
             ) : null}
             <div className="flex flex-row justify-center items-center gap-5">
-              <Button
-                variant="gradient"
-                ripple={true}
-                color="blue"
-                onClick={this.startPurchase.bind(this)}
-                disabled={this.props.balance.lt(total.weth)}
+              <div
+                className={`${this.props.isFinalizing ? "" : "border-info"}`}
               >
-                <div className="flex justify-center items-center">
-                  {this.props.isFinalizing ? (
-                    <components.Spinner size="sm" />
-                  ) : (
-                    ""
-                  )}
-                  {"Confirm Registration"}
-                </div>
-              </Button>
+                <Button
+                  variant="gradient"
+                  ripple={true}
+                  color="blue"
+                  onClick={this.startPurchase.bind(this)}
+                  disabled={this.props.balance.lt(total.weth)}
+                >
+                  <div className="flex justify-center items-center">
+                    {this.props.isFinalizing ? (
+                      <div className="flex items-center">
+                        <components.Spinner size="sm" />
+                        <components.labels.Warning
+                          text={this.props.progress.message}
+                        />
+                      </div>
+                    ) : (
+                      "Confirm Registration"
+                    )}
+                  </div>
+                </Button>
+              </div>
+
               <Button
                 className="cursor-pointer"
                 variant="gradient"
                 ripple={true}
                 color="gray"
                 onClick={() => this.cancelRegistration()}
+                disabled={this.props.isFinalizing}
               >
                 {"Cancel registration"}
               </Button>
@@ -298,23 +308,35 @@ class Register extends React.PureComponent {
         <div className="font-bold border-b border-gray-400 pb-4 mb-4 mt-5">
           {"Registration Complete"}
         </div>
-        <>
-          <components.labels.Success
-            text={"Your registration was successful."}
-          />
-          <div className="mt-8 max-w-sm m-auto flex justify-center">
-            <div className="mt-4">
+        <div>
+          <div className="flex flex-col justify-center items-center">
+            <img
+              src={services.linking.static("images/success.svg")}
+              alt="Success"
+              srcSet=""
+              className="w-[100px] h-[100px]"
+            />
+            <div className="py-4">
+              <components.labels.Success
+                text={"Your registration was successful."}
+              />
+            </div>
+          </div>
+
+          <div className="mt-8 max-w-md m-auto flex justify-center">
+            <div className="mt-4 w-full border-warning">
               <Button
                 variant="gradient"
                 ripple={true}
-                color="blue-gray"
+                color="green"
+                fullWidth={true}
                 onClick={this.viewDomain.bind(this)}
               >
                 {"View my domains"}
               </Button>
             </div>
           </div>
-        </>
+        </div>
       </>
     );
   }
@@ -325,16 +347,26 @@ class Register extends React.PureComponent {
         <div className="font-bold border-b border-gray-400 pb-4 mb-4">
           {"Error"}
         </div>
-        <components.labels.Error
-          text={
-            "Failed to register domain. Please reload the page and try again."
-          }
-        />
-        <div className="mt-8 max-w-sm m-auto">
+        <div className="flex flex-col justify-center items-center">
+          <img
+            src={services.linking.static("images/failed.svg")}
+            alt="Failed"
+            srcSet=""
+            className="w-[100px] h-[100px]"
+          />
+          <div className="py-4">
+            <components.labels.Error
+              text={"Failed to register domain."}
+              classes="py-4"
+            />
+          </div>
+        </div>
+
+        <div className="mt-8 max-w-sm m-auto border-warning">
           <components.buttons.CustomButton
             variant="gradient"
             ripple={true}
-            color="gray"
+            color="blue-gray"
             text={"Reload page"}
             onClick={() => window.location.reload()}
           />
@@ -360,11 +392,14 @@ class Register extends React.PureComponent {
             </div>
           </div>
           <div className="mb-8 flex justify-center">
-            <img
-              src={services.linking.static("images/nft_bg.png")}
-              alt="NFT PIC"
-              srcSet=""
-            />
+            <div className="relative animated_border">
+              <img
+                src={services.linking.static("images/nft_bg.png")}
+                className="rounded-lg"
+                alt="NFT PIC"
+                srcSet=""
+              />
+            </div>
           </div>
           <components.DomainSearch />
         </div>
@@ -391,18 +426,8 @@ class Register extends React.PureComponent {
         <div className="text-lg font-bold pl-2 mt-8 border-b border-gray-400 pb-4">
           {"Register New Domain"}
         </div>
-        {this.state.startPurchase ? (
-          <div className="w-full m-auto">
-            <components.ProgressBar progress={this.props.progress.percent} />
-            <div className="mb-4 text-center text-gray-400 flex items-center justify-center">
-              {this.props.progress.message}
-            </div>
-          </div>
-        ) : (
-          ""
-        )}
         <div className="flex flex-col md:flex-row justify-between gap-4">
-          <div className="flex flex-col mt-2 md:mt-8 p-3 w-full max-w-sm  flex-none">
+          <div className="flex flex-col mt-2 md:mt-8 p-3 w-full max-w-sm  flex-none custom-border ">
             {names.map(this.renderName.bind(this))}
           </div>
           <div className=" mt-8 w-full p-3">

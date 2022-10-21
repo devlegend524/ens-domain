@@ -5,6 +5,7 @@ import { ExternalLinkIcon } from "@heroicons/react/solid";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import services from "services";
 import components from "components";
+import { InformationCircleIcon } from "@heroicons/react/outline";
 
 import SetEVMReverseRecord from "./SetEVMReverseRecord";
 import SetRecord from "./SetRecord";
@@ -14,7 +15,7 @@ import actions from "./actions";
 import constants from "./constants";
 import reducer from "./reducer";
 import selectors from "./selectors";
-import './index.css'
+import "./index.css";
 
 class Domain extends React.PureComponent {
   constructor(props) {
@@ -157,7 +158,10 @@ class Domain extends React.PureComponent {
       <div className="max-w-screen-lg m-auto">
         <div className="flex lg:flex-row md:flex-col flex-col justify-center  gap-3">
           <div className=" rounded-xl relative p-0 md:p-2 bg-gray-100 dark:bg-gray-800">
-            <components.NFTCard name={this.state.domain} />
+            <components.NFTCard
+              name={this.state.domain}
+              classes="animated_border"
+            />
           </div>
           <div className=" rounded-xl w-full relative py-2 px-4 md:py-2 md:px-8 dark:bg-gray-800 w-full">
             <div className="flex justify-between items-center">
@@ -188,7 +192,7 @@ class Domain extends React.PureComponent {
                   fullWidth={true}
                   text={"Register Now"}
                   onClick={(navigator) => this.addToCart(navigator)}
-                />                  
+                />
               </div>
             ) : null}
           </div>
@@ -200,7 +204,13 @@ class Domain extends React.PureComponent {
   renderUnsupported() {
     return (
       <div className="max-w-md m-auto">
-        <div className="max-w-sm m-auto mt-4 flex items-center justify-center">
+        <div className="max-w-sm m-auto mt-4 flex flex-col gap-4 items-center justify-center">
+          <img
+            src={services.linking.static("images/failed.svg")}
+            alt="Failed"
+            srcSet=""
+            className="w-[100px] h-[100px]"
+          />
           <components.labels.Error text={"This name cannot be registered"} />
         </div>
         <div className="mt-4">
@@ -248,10 +258,10 @@ class Domain extends React.PureComponent {
         <components.Modal
           title={
             this.state.deleteRecordKey
-              ? 'Delete Record'
+              ? "Delete Record"
               : this.state.editRecordKey
-              ? 'Edit Record'
-              : 'Add Record'
+              ? "Edit Record"
+              : "Add Record"
           }
           ref={(ref) => (this.setRecordModal = ref)}
         >
@@ -276,21 +286,19 @@ class Domain extends React.PureComponent {
         </components.Modal>
 
         <div className="w-full">
-          <div className="flex lg:flex-row md:flex-col flex-col justify-center  gap-3">
+          <div className="flex lg:flex-row md:flex-col flex-col justify-center items-center lg:items-start  gap-3">
             <div className=" rounded-xl relative p-0 md:p-2 bg-gray-100 dark:bg-gray-800">
-              <components.NFTCard name={this.state.domain} />
+              <components.NFTCard
+                name={this.state.domain}
+                classes="animated_border"
+              />
             </div>
             <div className=" rounded-xl w-full relative py-2 px-4 md:py-2 md:px-8 dark:bg-gray-800 w-full">
-              <div className="flex justify-between items-center">
-                <div className="font-bold">{"Basic Information"}</div>
-              </div>
-              <div
-                className="w-full bg-gray-300 dark:bg-gray-700 mt-4"
-                style={{ height: "1px" }}
-              ></div>
-              <div className="mt-4 text-sm">
-                <div className="font-bold">{"Registrant"}</div>
-                <div className="truncate flex items-center flex-wrap">
+              <div className="mt-4">
+                <div className="font-bold border-b border-gray-400 mb-2 pb-1">
+                  {"Owner"}
+                </div>
+                <div className="text-sm md:text-md flex items-center flex-wrap">
                   <div
                     className="flex items-center cursor-pointer w-full sm:w-auto"
                     onClick={() => {
@@ -304,8 +312,9 @@ class Domain extends React.PureComponent {
                       this.dataExplorerModal.toggle();
                     }}
                   >
-                    <div className="truncate">{this.props.domain.owner}</div>
-                    <ExternalLinkIcon className="w-4 ml-2 flex-shrink-0" />
+                    <div className="text-sm md:text-md">
+                      {this.props.domain.owner}
+                    </div>
                   </div>
                   {this.state.connected && isOwned ? (
                     <components.buttons.Transparent
@@ -321,9 +330,11 @@ class Domain extends React.PureComponent {
                   ) : null}
                 </div>
               </div>
-              <div className="mt-4 text-sm">
-                <div className="font-bold">{"Resolver"}</div>
-                <div className="truncate flex items-center">
+              <div className="mt-4">
+                <div className="font-bold border-b border-gray-400 mb-2 pb-1">
+                  {"Resolver"}
+                </div>
+                <div className="text-sm md:text-md flex items-center">
                   {this.props.resolver ? (
                     <div>
                       {this.props.resolver.resolver ===
@@ -332,20 +343,47 @@ class Domain extends React.PureComponent {
                         : "Unknown Resolver"}
                     </div>
                   ) : (
-                    <div>Not set</div>
+                    <>
+                      <div className="text-red-500">Not set</div>
+                      {this.state.connected && isOwned ? (
+                        <components.buttons.Transparent
+                          onClick={this.setResolver}
+                        >
+                          <div className="ml-2 inline-block cursor-pointer text-alert-blue underline flex items-center">
+                            <img
+                              src={services.linking.static("images/set.svg")}
+                              className="w-5 h-4"
+                              alt="Set"
+                              srcSet=""
+                            />
+                          </div>
+                        </components.buttons.Transparent>
+                      ) : null}
+                    </>
                   )}
-                  {this.state.connected && isOwned ? (
-                    <components.buttons.Transparent onClick={this.setResolver}>
-                      <div className="ml-2 inline-block cursor-pointer text-alert-blue underline">
-                        Set Resolver
+
+                  {this.props.resolver ? (
+                    this.props.resolver.resolver ===
+                    this.state.defaultResolver ? (
+                      ""
+                    ) : (
+                      <div className="flex items-center ml-4">
+                        <InformationCircleIcon className="w-4 h-4" />
+                        <components.labels.Warning
+                          text={"You need to set resolver to set records"}
+                        />
                       </div>
-                    </components.buttons.Transparent>
-                  ) : null}
+                    )
+                  ) : (
+                    ""
+                  )}
                 </div>
               </div>
-              <div className="mt-4 text-sm">
-                <div className="font-bold">{"Primary"}</div>
-                <div className="truncate flex items-center flex-wrap">
+              <div className="mt-4">
+                <div className="font-bold  text-sm md:text-md border-b border-gray-400 mb-2 pb-1">
+                  {"Primary"}
+                </div>
+                <div className="text-sm md:text-md flex items-center flex-wrap">
                   {this.props.reverseRecords[this.wens.RECORDS.EVM] ? (
                     <div
                       className="flex items-center cursor-pointer w-full sm:w-auto"
@@ -360,11 +398,13 @@ class Domain extends React.PureComponent {
                         this.dataExplorerModal.toggle();
                       }}
                     >
-                      <div className="truncate">{this.props.domain.owner}</div>
+                      <div className="text-sm md:text-md">
+                        {this.props.domain.owner}
+                      </div>
                       <ExternalLinkIcon className="w-4 ml-2 flex-shrink-0" />
                     </div>
                   ) : (
-                    <div>Not set</div>
+                    <div className="text-red-500">Not set</div>
                   )}
                   {this.state.connected && isOwned ? (
                     <components.buttons.Transparent
@@ -384,23 +424,10 @@ class Domain extends React.PureComponent {
 
           <div className="mt-4  rounded-xl w-full relative p-4 md:p-8 dark:bg-gray-800 w-full">
             <div className="flex justify-between items-center">
-              <div className="font-bold">
-                {"Records"}
-                {this.props.resolver ? (
-                  <span className="text-green-500 mx-4">
-                    {this.props.resolver.resolver === this.state.defaultResolver
-                      ? "Default Resolver"
-                      : "Unknown Resolver"}
-                  </span>
-                ) : (
-                  <span className="text-red-500 mx-4">
-                    Set Resolver to set records
-                  </span>
-                )}
-              </div>
+              <div className="font-bold">{"Records"}</div>
             </div>
             <div
-              className="w-full bg-gray-300 dark:bg-gray-700 mt-4"
+              className="w-full bg-gray-300 dark:bg-gray-700 mt-4 mb-4"
               style={{ height: "1px" }}
             ></div>
             {this.props.isLoadingRecords ? (
@@ -410,11 +437,8 @@ class Domain extends React.PureComponent {
             ) : (
               <div className="mx-auto md:grid md:grid-rows-5 md:grid-flow-col gap-4">
                 {this.wens?.RECORDS._LIST.map((record, index) => (
-                  <div
-                    className="mt-4 flex flex-col gap-4"
-                    key={index}
-                  >
-                    <div className="text-sm font-bold  w-full max-w-[200px]">
+                  <div className=" flex flex-col gap-2" key={index}>
+                    <div className="text-sm font-bold  w-full max-w-[200px] border-b border-gray-400 pb-2">
                       {record.label}
                     </div>
                     <div
@@ -436,16 +460,17 @@ class Domain extends React.PureComponent {
                         this.dataExplorerModal.toggle();
                       }}
                     >
-                      <div className="truncate">
+                      <div className="text-sm md:text-md">
                         {this.props.records.filter(
                           (rec) => rec.label === record.label
-                        ).length > 0
-                          ? this.props.records.filter(
-                              (rec) => rec.label === record.label
-                            )[0].value
-                          : "Not Set"}
+                        ).length > 0 ? (
+                          this.props.records.filter(
+                            (rec) => rec.label === record.label
+                          )[0].value
+                        ) : (
+                          <div className="text-red-500">{"Not Set"}</div>
+                        )}
                       </div>
-                      <ExternalLinkIcon className="w-4 ml-2 pb-1 flex-shrink-0" />
                       {this.state.connected && isOwned ? (
                         <div className="flex items-center">
                           <div
@@ -466,9 +491,21 @@ class Domain extends React.PureComponent {
                           >
                             {this.props.records.filter(
                               (rec) => rec.label === record.label
-                            ).length > 0
-                              ? "Edit"
-                              : "Set"}
+                            ).length > 0 ? (
+                              <img
+                                src={services.linking.static("images/edit.svg")}
+                                className="w-5 h-4"
+                                alt="Edit"
+                                srcSet=""
+                              />
+                            ) : (
+                              <img
+                                src={services.linking.static("images/set.svg")}
+                                className="w-5 h-4"
+                                alt="Set"
+                                srcSet=""
+                              />
+                            )}
                           </div>
                           {this.props.records.filter(
                             (rec) => rec.label === record.label
@@ -480,7 +517,14 @@ class Domain extends React.PureComponent {
                               }}
                               className="ml-2 text-alert-blue underline cursor-pointer"
                             >
-                              {"Delete"}
+                              <img
+                                src={services.linking.static(
+                                  "images/delete.svg"
+                                )}
+                                className="w-5 h-4"
+                                alt="Delete"
+                                srcSet=""
+                              />
                             </div>
                           )}
                         </div>
