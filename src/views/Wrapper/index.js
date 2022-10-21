@@ -68,7 +68,7 @@ export default function Wrapper({ children }) {
             className="mr-4 flex items-center gap-2 cursor-pointer py-1.5 font-normal"
           >
             <img
-              src={services.linking.static("images/ethereum-eth.svg")}
+              src={services.linking.static("images/wrapped_logo.svg")}
               alt="logo"
               srcSet=""
               className="w-12 h-12 inline-block"
@@ -81,7 +81,7 @@ export default function Wrapper({ children }) {
             </div>
           </Link>
           {address
-            ? <div className="cursor-pointer flex items-center justify-center bg-gray-100 border border-gray-100 rounded-full py-1 px-2 dark:border-gray-600 ml-auto">
+            ? <div className="cursor-pointer flex items-center justify-center bg-gray-100 border border-gray-100 rounded-full py-1 px-2 dark:border-gray-600 ml-auto ">
                 <div className="text-sm mr-2">
                   {name || getAccount()}
                 </div>

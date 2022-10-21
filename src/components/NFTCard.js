@@ -75,16 +75,16 @@ export default function NFTCard({ name, isLinked, classes }) {
     <>
       {isLinked ? (
         <Link
-          className={`inline-block ${classes ? classes : ""}`}
+          className={`inline-block ${classes ? classes : ""} `}
           to={`/domains/${name}`}
         >
-          <canvas id="myCanvas" width="300" height="300" ref={canvasRef}>
+          <canvas id="myCanvas" width="300" height="300" ref={canvasRef}  className="rounded-lg">
             Your browser does not support the HTML canvas tag.
           </canvas>
         </Link>
       ) : (
-        <div className="inline-block">
-          <canvas id="myCanvas" width="300" height="300" ref={canvasRef}>
+        <div className="inline-block animated_border">
+          <canvas id="myCanvas" width="300" height="300" ref={canvasRef} className="rounded-lg">
             Your browser does not support the HTML canvas tag.
           </canvas>
         </div>

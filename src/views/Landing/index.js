@@ -21,22 +21,33 @@ export default function Landing() {
   return (
     <>
       <div className="max-w-2xl m-auto mt-[30px] md:mt-[70px] lg:mt-[100px]">
-        <div className="font-bold text-center mt-4 text-4xl">
-          {"Wrapped Ethereum Name Service"}
+        <div className="flex justify-center gap-4">
+          <div>
+            <img
+              src={services.linking.static("images/wrapped_logo.svg")}
+              alt="logo"
+              srcSet=""
+              className="w-14 h-14"
+            />
+          </div>
+          <div className="font-bold text-center mt-4 text-4xl">
+            {".WETH"}
+          </div>
         </div>
+
         <div className="text-center max-w-sm m-auto mt-4 mb-8">
           {
             "New Generation naming service for Ethereum ecosystem and its various subnets."
           }
         </div>
-        <div className="mb-8 mt-[50px]">
+        <div className="flex mb-8 mt-[50px]">
           <components.DomainSearch />
         </div>
       </div>
 
       <div className="mt-[50px] md:mt-[70px] lg:mt-[80px]">
         <div className="flex justify-between px-4 items-center">
-          <div className="text-sm md:text-md font-semibold">
+          <div className="text-md md:text-lg font-semibold">
             Recently Registered:
           </div>
           <div className="mr-0 md:mr-2">
@@ -57,7 +68,7 @@ export default function Landing() {
                 <components.NFTCard
                   name={nft.domain}
                   isLinked={true}
-                  classes="m-4"
+                  classes="m-4 animated_border"
                   key={i}
                 />
               ))}

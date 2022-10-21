@@ -1,0 +1,109 @@
+*, *::before, *::after {
+    box-sizing: border-box !important;
+}
+
+ 
+@-webkit-keyframes rotate {
+    100% {
+      transform: rotate(0.5turn);
+    }
+  }
+  
+  @keyframes rotate {
+    100% {
+      transform: rotate(0.5turn);
+    }
+  }
+
+  .border-info {
+    outline: 2px solid #E0E4CC;
+    border-radius: 10px;
+    box-shadow: 0 0 0 2px #377af5;
+    animation: 1s animateBorderInfo ease infinite;
+  }
+  .border-warning {
+    outline: 2px solid #E0E4CC;
+    border-radius: 10px;
+    box-shadow: 0 0 0 2px #e63987;
+    animation: 1s animateBorderWarning ease infinite;
+  }
+  .custom-border {
+    outline: 2px dotted #E0E4CC;
+    border-radius: 10px;
+    box-shadow: 0 0 0 2px #e63987;
+    animation: 1s animateBorderDefault ease infinite;
+  }
+
+  @keyframes animateBorderWarning {
+    to {
+      outline-color: #e63987;
+      box-shadow: 0 0 0 2px #E0E4CC;
+    }
+  }
+  
+  @keyframes animateBorderDefault {
+    to {
+      outline-color: #e63987;
+      box-shadow: 0 0 0 2px #E0E4CC;
+    }
+  }
+
+  @keyframes animateBorderInfo {
+    to {
+      outline-color: #377af5;
+      box-shadow: 0 0 0 2px #E0E4CC;
+    }
+  }
+  .animated_border {
+    position: relative !important;
+    z-index: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    outline: 1px solid #cec5c8;
+    padding: 3px;
+  }
+  
+
+  .animated_border:hover {
+    z-index: 0;
+    overflow: hidden;
+    padding: 3px;
+    outline: none;
+    box-shadow: none;
+  }
+  .animated_border:hover::before {
+    content: "";
+    position: absolute;
+    z-index: -2;
+    left: -50%;
+    top: -50%;
+    width: 200%;
+    height: 200%;
+    background-repeat: no-repeat;
+    background-size: 100% 100%, 50% 50%;
+    background-position: 0 0, 100% 0, 100% 100%, 0 100%;
+    background-image: linear-gradient(#6972e7, #e63987), linear-gradient(#e63987, #377af5), linear-gradient(#6972e7, #e63987), linear-gradient(#e63987, #377af5);
+    -webkit-animation: rotate 4s linear infinite;
+    animation: rotate 4s linear infinite;
+  }
+  .animated_border:hover::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: 6px;
+    top: 6px;
+    width: calc(100% - 12px);
+    height: calc(100% - 12px);
+  }
+  #search_input {
+    border: none;
+    outline: none;
+  }
+  #search_input:hover {
+    border: none;
+    outline: none;
+  }
+  #search_input:focus {
+    border: none;
+    outline: none;
+  }

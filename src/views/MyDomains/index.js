@@ -66,45 +66,6 @@ class MyDomains extends React.PureComponent {
     }
   }
 
-  renderHiddenDomainsNotice(domainCount) {
-    return (
-      <div className="mb-4 mt-8 max-w-md m-auto">
-        {domainCount > 0 ? (
-          <>
-            <components.labels.Information
-              text={`You have ${domainCount} unrevealed Enhanced Privacy ${
-                domainCount === 1 ? "domain" : "domains"
-              } in your wallet.`}
-            />
-            <div className="max-w-md m-auto">
-              <div className="mt-4 text-gray-700">
-                {
-                  "Enhanced Privacy Domains are hidden on-chain so that an observers have difficulty knowing which domains you have registered. To reveal your domains, search for them below. You can enter multiple domains separated by spaces, or copy-paste them from a text file or spreadsheet."
-                }
-              </div>
-              <div className="mt-4 mb-4">
-                <components.DomainReveal />
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="mb-4">
-            <components.labels.Success
-              text={"All of your domains have been revealed."}
-            />
-          </div>
-        )}
-        <components.buttons.CustomButton
-          variant="gradient"
-          ripple={true}
-          color="blue-gray"
-          text={"Return to domain list"}
-          onClick={() => this.hiddenDomainsModal.toggle()}
-        />
-      </div>
-    );
-  }
-
   renderDomains() {
     const reverseLookups = this.props.reverseLookups;
     if (!this.props.domainIds) return;
@@ -129,7 +90,7 @@ class MyDomains extends React.PureComponent {
                   <input
                     type="text"
                     placeholder="Search Domain"
-                    className="w-full p-2 bg-white dark:bg-gray-800"
+                    className="w-full p-2 bg-white dark:bg-gray-800 custom-border"
                     onChange={(e) => {
                       if (this.searchTimeout) clearTimeout(this.searchTimeout);
                       this.searchTimeout = setTimeout(() => {
@@ -147,7 +108,7 @@ class MyDomains extends React.PureComponent {
               <div className="grid sm:flex sm:justify-center sm:flex-col sm:items-center md:grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-2 sm:gap-4 md:gap-2">
                 {domains.map((hash, index) => {
                   const domain = reverseLookups[hash];
-                  return <components.NFTCard name={domain} isLinked={true} key={index} />;
+                  return <components.NFTCard name={domain} isLinked={true} key={index} classes="animated_border" />;
                 })}
               </div>
             ) : (
@@ -222,12 +183,6 @@ class MyDomains extends React.PureComponent {
     }
     return (
       <div className="max-w-screen-xl m-auto md:px-4">
-        <components.Modal
-          ref={(ref) => (this.hiddenDomainsModal = ref)}
-          title={"Hidden Domains"}
-        >
-          {this.renderHiddenDomainsNotice(hiddenDomainCount)}
-        </components.Modal>
         <>
           <div className="flex justify-between mt-2 md:mt-8 mb-4 items-center">
             <div className="text-lg font-bold pl-2">{"My Domains"}</div>
@@ -241,19 +196,6 @@ class MyDomains extends React.PureComponent {
                   >
                     <RefreshIcon className="w-4 md:mr-2" />
                     <div className="hidden md:block">Refresh</div>
-                  </div>
-                ) : null}
-                {hiddenDomainCount > 0 ? (
-                  <div
-                    className="ml-2 cursor-pointer bg-gray-100 dark:bg-gray-700 px-2 md:px-4 py-2 rounded-lg flex items-center text-sm"
-                    onClick={() => this.hiddenDomainsModal.toggle()}
-                  >
-                    <EyeOffIcon className="w-4 md:mr-2" />
-                    <div className="hidden md:block">
-                      {hiddenDomainCount === 1
-                        ? "1 Hidden Domain"
-                        : `${hiddenDomainCount} Hidden Domains`}
-                    </div>
                   </div>
                 ) : null}
               </div>

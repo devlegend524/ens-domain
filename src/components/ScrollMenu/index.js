@@ -62,7 +62,7 @@ const ScrollMenu = (props) => {
 
   window.addEventListener("resize", buttonStatus);
   return (
-    <div>
+    <div className="">
       <div className="relative inline-block">
         <button
           id={props.leftButtonId}
