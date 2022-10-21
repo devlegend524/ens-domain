@@ -359,23 +359,13 @@ class Domain extends React.PureComponent {
                           </div>
                         </components.buttons.Transparent>
                       ) : null}
-                    </>
-                  )}
-
-                  {this.props.resolver ? (
-                    this.props.resolver.resolver ===
-                    this.state.defaultResolver ? (
-                      ""
-                    ) : (
                       <div className="flex items-center ml-4">
                         <InformationCircleIcon className="w-4 h-4" />
                         <components.labels.Warning
                           text={"You need to set resolver to set records"}
                         />
                       </div>
-                    )
-                  ) : (
-                    ""
+                    </>
                   )}
                 </div>
               </div>
