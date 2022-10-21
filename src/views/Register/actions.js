@@ -123,46 +123,46 @@ const actions = {
             );
           }
           j += 1;
+          dispatch(
+            actions.setProgress({
+              message: `Registering Domain (${j + 1}/${numSteps})`,
+              percent: parseInt(j / numSteps * 100)
+            })
+          );
+          j += 1;
+
+          let _quantities = [];
+          let _pricingProofs = [];
+          let _constraintsProofs = [];
+          if (names.length > services.environment.MAX_REGISTRATION_NAMES) {
+            names = names.slice(0, services.environment.MAX_REGISTRATION_NAMES);
+          }
+          names.forEach(name => {
+            _quantities.push(quantities[name]);
+            _pricingProofs.push(pricingProofs[name]);
+            _constraintsProofs.push(constraintsProofs[name]);
+          });
+
+          const preimages = await api.buildPreimages(names);
+          await api.registerWithPreimage(
+            names,
+            _quantities,
+            _constraintsProofs,
+            _pricingProofs,
+            preimages
+          );
+
+          await api.generateNFTImage(names);
+
+          dispatch(actions.setIsComplete(true));
+          dispatch(actions.setIsFinalizing(false));
+          dispatch(
+            actions.setProgress({
+              message: `Done`,
+              percent: 100
+            })
+          );
         }
-        dispatch(
-          actions.setProgress({
-            message: `Registering Domain (${j + 1}/${numSteps})`,
-            percent: parseInt(j / numSteps * 100)
-          })
-        );
-        j += 1;
-
-        let _quantities = [];
-        let _pricingProofs = [];
-        let _constraintsProofs = [];
-        if (names.length > services.environment.MAX_REGISTRATION_NAMES) {
-          names = names.slice(0, services.environment.MAX_REGISTRATION_NAMES);
-        }
-        names.forEach(name => {
-          _quantities.push(quantities[name]);
-          _pricingProofs.push(pricingProofs[name]);
-          _constraintsProofs.push(constraintsProofs[name]);
-        });
-
-        const preimages = await api.buildPreimages(names);
-        await api.registerWithPreimage(
-          names,
-          _quantities,
-          _constraintsProofs,
-          _pricingProofs,
-          preimages
-        );
-
-        await api.generateNFTImage(names);
-
-        dispatch(actions.setIsComplete(true));
-        dispatch(actions.setIsFinalizing(false));
-        dispatch(
-          actions.setProgress({
-            message: `Done`,
-            percent: 100
-          })
-        );
       } catch (err) {
         console.log(err);
         dispatch(actions.setHasError(true));
