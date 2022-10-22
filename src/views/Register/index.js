@@ -267,7 +267,7 @@ class Register extends React.PureComponent {
                 <Button
                   variant="gradient"
                   ripple={true}
-                  color="blue"
+                  color="blue-gray"
                   onClick={this.startPurchase.bind(this)}
                   disabled={this.props.balance.lt(total.weth)}
                 >
@@ -275,7 +275,7 @@ class Register extends React.PureComponent {
                     {this.props.isFinalizing ? (
                       <div className="flex items-center">
                         <components.Spinner size="sm" />
-                        <components.labels.Warning
+                        <components.labels.Information
                           text={this.props.progress.message}
                         />
                       </div>
@@ -290,7 +290,7 @@ class Register extends React.PureComponent {
                 className="cursor-pointer"
                 variant="gradient"
                 ripple={true}
-                color="gray"
+                color="blue-gray"
                 onClick={() => this.cancelRegistration()}
                 disabled={this.props.isFinalizing}
               >
@@ -328,7 +328,7 @@ class Register extends React.PureComponent {
               <Button
                 variant="gradient"
                 ripple={true}
-                color="green"
+                color="blue-gray"
                 fullWidth={true}
                 onClick={this.viewDomain.bind(this)}
               >

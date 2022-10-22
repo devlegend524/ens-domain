@@ -187,7 +187,7 @@ class Domain extends React.PureComponent {
               <div className="mt-4">
                 <components.buttons.CustomButton
                   variant="filled"
-                  color="cyan"
+                  color="blue-gray"
                   ripple={true}
                   fullWidth={true}
                   text={"Register Now"}
