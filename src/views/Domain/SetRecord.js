@@ -1,5 +1,5 @@
 import React from "react";
-
+import services from 'services'
 import components from "components";
 
 class AddRecord extends React.PureComponent {
@@ -54,13 +54,14 @@ class AddRecord extends React.PureComponent {
     return (
       <>
         <div className="max-w-md m-auto">
-          <div className="font-bold mb-2">Type</div>
-          <div>{this.getEditRecordType()}</div>
-          <div>
-            <div className="font-bold mt-4 mb-2">Value</div>
+          <div className="border-b border-gray-400 mt-5 mb-4 pb-4"><span className="font-semibold mb-2 mr-4" >Record type: </span> <span className="font-bold">{this.getEditRecordType()}</span></div>
+         
+          <div className="flex items-center">
+            <div className="font-semibold mt-4 mb-2  mr-4">Value: </div>
             <input
               type="text"
-              className="bg-gray-100 dark:bg-gray-800 w-full rounded-xl px-4 py-2"
+              className="bg-gray-100 dark:bg-gray-800 w-full rounded-xl px-4 py-2 border border-gray-400"
+              placeholder={this.getEditRecordType()}
               ref={(ref) => (this.inputRef = ref)}
               disabled={
                 this.props.deleteRecord || this.props.loading ? "disabled" : ""

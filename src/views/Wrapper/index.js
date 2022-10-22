@@ -68,7 +68,7 @@ export default function Wrapper({ children }) {
             className="mr-4 flex items-center gap-2 cursor-pointer py-1.5 font-normal"
           >
             <img
-              src={services.linking.static("images/ethereum-eth.svg")}
+              src={services.linking.static("images/eth.png")}
               alt="logo"
               srcSet=""
               className="w-12 h-12 inline-block"

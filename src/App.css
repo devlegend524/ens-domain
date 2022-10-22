@@ -31,7 +31,7 @@
     outline: 2px dotted #E0E4CC;
     border-radius: 10px;
     box-shadow: 0 0 0 2px #e63987;
-    animation: 1s animateBorderDefault ease infinite;
+    animation: 4s animateBorderDefault ease infinite;
   }
 
   @keyframes animateBorderWarning {
