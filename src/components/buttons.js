@@ -17,7 +17,7 @@ function CustomButton(props) {
     <div className="w-full m-auto">
       <Button
         variant={props.variant ? props.variant : "filled"}
-        color={props.color ? props.color : "cyan"}
+        color={props.color ? props.color : "blue-gray"}
         ripple={true}
         fullWidth={props.fullWidth ? props.fullWidth : true}
         onClick={onClick}

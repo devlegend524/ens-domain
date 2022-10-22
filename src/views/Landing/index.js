@@ -24,7 +24,7 @@ export default function Landing() {
         <div className="flex justify-center gap-4">
           <div>
             <img
-              src={services.linking.static("images/wrapped_logo.svg")}
+              src={services.linking.static("images/ethereum-eth.svg")}
               alt="logo"
               srcSet=""
               className="w-14 h-14"
