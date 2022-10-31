@@ -104,7 +104,7 @@ class WensClient {
     const split = name.split(".");
     if (split.length !== 2) return false;
     if (split[1] !== "weth") return false;
-    if (split[0].length < 3) return false;
+    if (split[0].length < 1) return false;
     if (split[0].length > 62) return false;
     if (!split[0].match(/^[a-z0-9][a-z0-9-]+[a-z0-9]$/)) return false;
     if (split[0].length >= 4 && split[0][2] === "-" && split[0][3] === "-")
