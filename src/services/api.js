@@ -158,7 +158,7 @@ class WensClient {
   async revealDomain(domain) {
     const preimage = await client.utils.encodeNameHashInputSignals(domain);
     const hash = await client.utils.nameHash(domain);
-    const tx = await this.contracts.RainbowTableV1.reveal(preimage, hash);
+    const tx = await this.contracts.RainbowTable.reveal(preimage, hash);
     await tx.wait();
   }
 
@@ -263,7 +263,7 @@ class WensClient {
       pricingProofs,
       salt
     );
-    const tx = await this.contracts.LeasingAgentV1.commit(hash);
+    const tx = await this.contracts.LeasingAgent.commit(hash);
     await tx.wait();
     return hash;
   }
@@ -293,7 +293,7 @@ class WensClient {
   }
   async getRegistrationPremium() {
     const now = parseInt(Date.now() / 1000);
-    const registrationPremium = await this.contracts.LeasingAgentV1.getRegistrationPremium(
+    const registrationPremium = await this.contracts.LeasingAgent.getRegistrationPremium(
       now
     );
     return registrationPremium;
@@ -305,7 +305,7 @@ class WensClient {
     );
     const premium = await this.getRegistrationPremium();
     const value = total;
-    const gasEstimate = await this.contracts.LeasingAgentV1.estimateGas.register(
+    const gasEstimate = await this.contracts.LeasingAgent.estimateGas.register(
       hashes,
       quantities,
       constraintsProofs,
@@ -317,7 +317,7 @@ class WensClient {
     const gasLimit = gasEstimate.add(
       this._getTreasuryGasSurplus().mul(hashes.length)
     );
-    const registerTx = await this.contracts.LeasingAgentV1.register(
+    const registerTx = await this.contracts.LeasingAgent.register(
       hashes,
       quantities,
       constraintsProofs,
@@ -343,7 +343,7 @@ class WensClient {
     );
     const premium = await this.getRegistrationPremium();
     const value = total.add(premium.mul(hashes.length));
-    const gasEstimate = await this.contracts.LeasingAgentV1.estimateGas.registerWithPreimage(
+    const gasEstimate = await this.contracts.LeasingAgent.estimateGas.registerWithPreimage(
       hashes,
       quantities,
       constraintsProofs,
@@ -357,7 +357,7 @@ class WensClient {
     const gasLimit = gasEstimate.add(
       this._getTreasuryGasSurplus().mul(hashes.length)
     );
-    const registerTx = await this.contracts.LeasingAgentV1.registerWithPreimage(
+    const registerTx = await this.contracts.LeasingAgent.registerWithPreimage(
       hashes,
       quantities,
       constraintsProofs,
@@ -387,21 +387,17 @@ class WensClient {
   }
 
   async bid(hashes) {
-    const tx = await this.contracts.SunriseAuctionV1.bid(hashes);
+    const tx = await this.contracts.SunriseAuction.bid(hashes);
     await tx.wait();
   }
 
   async reveal(names, amounts, salt) {
-    const tx = await this.contracts.SunriseAuctionV1.reveal(
-      names,
-      amounts,
-      salt
-    );
+    const tx = await this.contracts.SunriseAuction.reveal(names, amounts, salt);
     await tx.wait();
   }
 
   async revealWithPreimage(names, amounts, salt, preimages) {
-    const tx = await this.contracts.SunriseAuctionV1.revealWithPreimage(
+    const tx = await this.contracts.SunriseAuction.revealWithPreimage(
       names,
       amounts,
       salt,
@@ -414,7 +410,7 @@ class WensClient {
     const hash = await client.utils.nameHash(name);
     let result;
     try {
-      const output = await this.contracts.SunriseAuctionV1.getWinningBid(
+      const output = await this.contracts.SunriseAuction.getWinningBid(
         hash.toString()
       );
       try {
@@ -473,7 +469,7 @@ class WensClient {
     const contract = this.getWwethContract();
     const allowance = await contract.allowance(
       this.account,
-      this.contracts.SunriseAuctionV1.address
+      this.contracts.SunriseAuction.address
     );
     return allowance.toString();
   }
@@ -489,24 +485,24 @@ class WensClient {
   async approveWwethForAuction(amount) {
     const contract = this.getWwethContract();
     const tx = await contract.approve(
-      this.contracts.SunriseAuctionV1.address,
+      this.contracts.SunriseAuction.address,
       amount
     );
     await tx.wait();
   }
 
   async getRevealedBidForSenderCount() {
-    const count = await this.contracts.SunriseAuctionV1.getRevealedBidForSenderCount();
+    const count = await this.contracts.SunriseAuction.getRevealedBidForSenderCount();
     return count;
   }
 
   async getRevealedBidForSenderAtIndex(index) {
-    const bid = await this.contracts.SunriseAuctionV1.getRevealedBidForSenderAtIndex(
+    const bid = await this.contracts.SunriseAuction.getRevealedBidForSenderAtIndex(
       index
     );
     let nameSignal, preimage;
     try {
-      nameSignal = await this.contracts.RainbowTableV1.lookup(bid.name);
+      nameSignal = await this.contracts.RainbowTable.lookup(bid.name);
       preimage = await client.utils.decodeNameHashInputSignals(nameSignal);
     } catch (err) {
       preimage = null;
@@ -521,14 +517,14 @@ class WensClient {
 
   async checkHasAccount() {
     // check if there is an account on-chain
-    const hasAccount = await this.contracts.AccountGuardV1.addressHasAccount(
+    const hasAccount = await this.contracts.AccountGuard.addressHasAccount(
       this.account
     );
     return hasAccount;
   }
 
   async submitAccountVerification(signature) {
-    const tx = await this.contracts.AccountGuardV1.verify(
+    const tx = await this.contracts.AccountGuard.verify(
       ethers.utils.getAddress(this.account),
       signature
     );
@@ -545,23 +541,23 @@ class WensClient {
   }
 
   async lookupPreimage(hash) {
-    const output = await this.contracts.RainbowTableV1.lookup(hash);
+    const output = await this.contracts.RainbowTable.lookup(hash);
     const name = await client.utils.decodeNameHashInputSignals(output);
     return name;
   }
 
   async isPreimageRevealed(hash) {
-    const output = await this.contracts.RainbowTableV1.isRevealed(hash);
+    const output = await this.contracts.RainbowTable.isRevealed(hash);
     return output;
   }
 
   getDefaultResolverAddress() {
-    return this.contracts.PublicResolverV1.address;
+    return this.contracts.PublicResolver.address;
   }
 
   async getResolver(domain) {
     const hash = await client.utils.nameHash(domain);
-    const resolver = await this.contracts.ResolverRegistryV1.get(hash, hash);
+    const resolver = await this.contracts.ResolverRegistry.get(hash, hash);
     return resolver;
   }
 
@@ -575,14 +571,14 @@ class WensClient {
       // otherwise, we are setting it to None
       datasetId = 0;
     }
-    const contract = await this.contracts.ResolverRegistryV1;
+    const contract = await this.contracts.ResolverRegistry;
     const tx = await contract.set(hash, [], address, datasetId);
     await tx.wait();
   }
 
   async setStandardRecord(domain, type, value) {
     const hash = await client.utils.nameHash(domain);
-    const tx = await this.contracts.PublicResolverV1.setStandard(
+    const tx = await this.contracts.PublicResolver.setStandard(
       hash,
       [],
       type,
@@ -595,7 +591,7 @@ class WensClient {
     // this won't work for subdomains yet.
     const hash = await client.utils.nameHash(domain);
     const promises = this.wens.RECORDS._LIST.map(r =>
-      this.contracts.PublicResolverV1.resolveStandard(hash, hash, r.key)
+      this.contracts.PublicResolver.resolveStandard(hash, hash, r.key)
     );
     const results = await Promise.all(promises);
     return results
@@ -611,7 +607,7 @@ class WensClient {
   async getReverseRecords(domain) {
     const hash = await client.utils.nameHash(domain);
     const promises = [
-      this.wens.contracts.EVMReverseResolverV1.getEntry(hash, hash)
+      this.wens.contracts.EVMReverseResolver.getEntry(hash, hash)
     ];
     const results = await Promise.all(promises);
     return {
@@ -641,7 +637,7 @@ class WensClient {
 
   async setEVMReverseRecord(domain) {
     const hash = await client.utils.nameHash(domain);
-    const tx = await this.wens.contracts.EVMReverseResolverV1.set(hash, []);
+    const tx = await this.wens.contracts.EVMReverseResolver.set(hash, []);
     await tx.wait();
   }
 
