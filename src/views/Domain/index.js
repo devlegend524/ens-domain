@@ -65,7 +65,6 @@ class Domain extends React.PureComponent {
     const params = services.linking.getParams("Domain");
     const domain = params.domain ? params.domain.toLowerCase() : null;
     this.props.loadDomain(domain);
-    this.props.loadRegistrationPremium();
   }
 
   onConnect() {
@@ -607,7 +606,6 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  loadRegistrationPremium: () => dispatch(actions.loadRegistrationPremium()),
   loadDomain: (domain) => dispatch(actions.loadDomain(domain)),
   addToCart: (domain) => dispatch(services.cart.actions.addToCart(domain)),
   setStandardRecord: (domain, type, value) =>

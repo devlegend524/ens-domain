@@ -32,7 +32,6 @@ class Register extends React.PureComponent {
       services.provider.EVENTS.DISCONNECTED,
       this.onDisconnect.bind(this)
     );
-    this.props.loadRegistrationPremium();
     if (services.provider.isConnected()) {
       this.props.loadBalance();
     }
@@ -471,7 +470,6 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  loadRegistrationPremium: () => dispatch(actions.loadRegistrationPremium()),
   loadBalance: () => dispatch(actions.loadBalance()),
   removeFromCart: (name) =>
     dispatch(services.cart.actions.removeFromCart(name)),

@@ -27,13 +27,14 @@ const actions = {
     return async (dispatch, getState) => {
       const api = services.provider.buildAPI();
       dispatch(actions.setDomainCount(null));
-      const domainCount = await api.getDomainCountForOwner(api.account);
+      const domains = await api.getDomainsByOwner(api.account);
+
       let domainIds = [];
       let loadedDomainCount = 0;
       dispatch(actions.setLoadedDomainCount(0));
-      dispatch(actions.setDomainCount(domainCount));
-      for (let i = 0; i < domainCount; i += 1) {
-        let id = await api.getTokenOfOwnerByIndex(api.account, i.toString());
+      dispatch(actions.setDomainCount(domains.length));
+      for (let i = 0; i < domains.length; i += 1) {
+        let id = domains[i].tokenId;
         domainIds.push(id);
         loadedDomainCount += 1;
         if (loadedDomainCount % 10 === 0)

@@ -21,6 +21,12 @@ const nft = {
       `${environment.BACKEND_BASE_URL}/api/getRecentNFTs`
     );
     return res.data;
+  },
+  getDomainsByOwner: async account => {
+    const res = await axios.get(
+      `${environment.BACKEND_BASE_URL}/api/getDomainsByOwner/${account}`
+    );
+    return res.data;
   }
 };
 

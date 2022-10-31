@@ -54,14 +54,6 @@ const actions = {
     };
   },
 
-  loadRegistrationPremium: () => {
-    return async (dispatch, getState) => {
-      const api = services.provider.buildAPI();
-      const premium = await api.getRegistrationPremium();
-      dispatch(actions.setRegistrationPremium(premium));
-    };
-  },
-
   setBalance: balance => {
     return {
       type: constants.SET_BALANCE,

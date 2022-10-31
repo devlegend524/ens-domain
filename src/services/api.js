@@ -37,25 +37,12 @@ class WensClient {
   }
 
   async ownerOf(hash) {
-    const owner = await this.contracts.Domain.ownerOf(hash);
+    const owner = await this.contracts.Domain.creators(hash);
     return owner;
   }
 
-  async getDomainCountForOwner(account) {
-    const count = await this.contracts.Domain.balanceOf(account);
-    return parseInt(count.toString());
-  }
-
-  async getDomainIDsByOwner(account) {
-    const domainCount = await this.getDomainCountForOwner(account);
-    let domains = [];
-    for (let i = 0; i < domainCount; i += 1) {
-      let id = await this.contracts.Domain.tokenOfOwnerByIndex(
-        account,
-        i.toString()
-      );
-      domains.push(id);
-    }
+  async getDomainsByOwner(account) {
+    const domains = await services.nft.getDomainsByOwner(account);
     return domains;
   }
 
@@ -291,19 +278,12 @@ class WensClient {
   _getTreasuryGasSurplus() {
     return ethers.BigNumber.from("20000");
   }
-  async getRegistrationPremium() {
-    const now = parseInt(Date.now() / 1000);
-    const registrationPremium = await this.contracts.LeasingAgent.getRegistrationPremium(
-      now
-    );
-    return registrationPremium;
-  }
+
   async register(domains, quantities, constraintsProofs, pricingProofs) {
     const { total, hashes } = await this._getRegistrationArgs(
       domains,
       quantities
     );
-    const premium = await this.getRegistrationPremium();
     const value = total;
     const gasEstimate = await this.contracts.LeasingAgent.estimateGas.register(
       hashes,
@@ -341,8 +321,7 @@ class WensClient {
       domains,
       quantities
     );
-    const premium = await this.getRegistrationPremium();
-    const value = total.add(premium.mul(hashes.length));
+    const value = total;
     const gasEstimate = await this.contracts.LeasingAgent.estimateGas.registerWithPreimage(
       hashes,
       quantities,
@@ -374,15 +353,16 @@ class WensClient {
   async generateNFTImage(names) {
     console.log("domain name: ", names);
     if (this.account) {
-      const domainIDs = await this.getDomainIDsByOwner(
-        this.account.toLowerCase()
-      );
-      console.log("domain ID: ", domainIDs[domainIDs.length - 1].toString());
-      await services.nft.generateNFT(
-        names[0],
-        domainIDs[domainIDs.length - 1],
-        this.account.toLowerCase()
-      );
+      for (let i = 0; i < names.length; i += 1) {
+        let hash = await client.utils.nameHash(names[i]);
+        console.log("domain ID: ", hash);
+
+        await services.nft.generateNFT(
+          names[i],
+          hash,
+          this.account.toLowerCase()
+        );
+      }
     }
   }
 
