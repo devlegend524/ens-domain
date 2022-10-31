@@ -197,6 +197,7 @@ class WensClient {
     const namespaceHash = await client.utils.nameHash(namespace);
     const hash = await client.utils.nameHash(domain);
     let minLength = name.length;
+    console.log(minLength);
     if (name.length >= 6) minLength = 6;
     const inputs = {
       namespaceId: namespaceHash.toString(),
@@ -309,13 +310,7 @@ class WensClient {
     await registerTx.wait();
   }
 
-  async registerWithPreimage(
-    domains,
-    quantities,
-    constraintsProofs,
-    pricingProofs,
-    preimages
-  ) {
+  async registerWithPreimage(domains, quantities, lengths, preimages) {
     const { total, hashes } = await this._getRegistrationArgs(
       domains,
       quantities
@@ -324,8 +319,7 @@ class WensClient {
     const gasEstimate = await this.contracts.LeasingAgent.estimateGas.registerWithPreimage(
       hashes,
       quantities,
-      constraintsProofs,
-      pricingProofs,
+      lengths,
       preimages,
       {
         value
@@ -338,8 +332,7 @@ class WensClient {
     const registerTx = await this.contracts.LeasingAgent.registerWithPreimage(
       hashes,
       quantities,
-      constraintsProofs,
-      pricingProofs,
+      lengths,
       preimages,
       {
         gasLimit,
