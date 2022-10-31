@@ -9,7 +9,7 @@ const nft = {
       `${environment.BACKEND_BASE_URL}/api/generateNFT`,
       {
         name: name,
-        tokenId: tokenId,
+        tokenId: typeof tokenId === "bigint" ? tokenId.toString() : tokenId,
         address: address
       }
     );

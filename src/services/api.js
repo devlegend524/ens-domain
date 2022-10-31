@@ -355,8 +355,6 @@ class WensClient {
     if (this.account) {
       for (let i = 0; i < names.length; i += 1) {
         let hash = await client.utils.nameHash(names[i]);
-        console.log("domain ID: ", hash);
-
         await services.nft.generateNFT(
           names[i],
           hash,
