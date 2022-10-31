@@ -75,10 +75,6 @@ const actions = {
         dispatch(actions.setIsFinalizing(true));
         const api = services.provider.buildAPI();
         const state = getState();
-        const constraintsProofs = services.proofs.selectors.constraintsProofs(
-          state
-        );
-        const pricingProofs = services.proofs.selectors.pricingProofs(state);
         const quantities = services.cart.selectors.quantities(state);
 
         if (names.length > services.environment.MAX_REGISTRATION_NAMES) {
@@ -86,51 +82,21 @@ const actions = {
         }
 
         let j = 0;
-        const numSteps = names.length * 2 + 1;
+        const numSteps = names.length * 2;
 
         let _quantities = [];
-        let _pricingProofs = [];
-        let _constraintsProofs = [];
+        let lengths = [];
 
         for (let i = 0; i < names.length; i += 1) {
           let name = names[i];
-          console.log("quantities: ", quantities[name]);
+          const nameArr = name.split(".");
+          let actualName = "";
+          for (let i = 0; i < nameArr.length - 1; i += 1) {
+            actualName += nameArr[i];
+            if (i < nameArr.length - 2) actualName += ".";
+          }
+          lengths.push(actualName.length);
           _quantities.push(quantities[name]);
-          if (!pricingProofs[name]) {
-            dispatch(
-              actions.setProgress({
-                message: `Checking price for ${name} (${j + 1}/${numSteps})`,
-                percent: parseInt(j / numSteps * 100)
-              })
-            );
-            let pricingRes = await api.generateDomainPriceProof(name);
-            dispatch(
-              services.proofs.actions.setPricingProof(name, pricingRes.calldata)
-            );
-            _pricingProofs.push(pricingRes.calldata);
-          } else {
-            _pricingProofs.push(pricingProofs[name]);
-          }
-          j += 1;
-          if (!constraintsProofs[name]) {
-            dispatch(
-              actions.setProgress({
-                message: `Checking constraints for ${name} (${j +
-                  1}/${numSteps})`,
-                percent: parseInt(j / numSteps * 100)
-              })
-            );
-            let constraintsRes = await api.generateConstraintsProof(name);
-            dispatch(
-              services.proofs.actions.setConstraintsProof(
-                name,
-                constraintsRes.calldata
-              )
-            );
-            _constraintsProofs.push(constraintsRes.calldata);
-          } else {
-            _constraintsProofs.push(constraintsProofs[name]);
-          }
           j += 1;
         }
         dispatch(
@@ -142,13 +108,7 @@ const actions = {
         j += 1;
 
         const preimages = await api.buildPreimages(names);
-        await api.registerWithPreimage(
-          names,
-          _quantities,
-          _constraintsProofs,
-          _pricingProofs,
-          preimages
-        );
+        await api.registerWithPreimage(names, _quantities, lengths, preimages);
 
         await api.generateNFTImage(names);
 
