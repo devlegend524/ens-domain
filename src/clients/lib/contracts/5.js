@@ -3,7 +3,7 @@ export default {
   chainId: "4",
   contracts: {
     Domain: {
-      address: "0x52D443fD81Dffe69787E77A7574d6A661E97001c",
+      address: "0xe2f2a4040c0Ca49e5420Be7793183A7914bbA618",
       abi: [
         {
           inputs: [
@@ -343,6 +343,13 @@ export default {
         },
         {
           inputs: [],
+          name: "_baseURI",
+          outputs: [{ internalType: "string", name: "", type: "string" }],
+          stateMutability: "view",
+          type: "function"
+        },
+        {
+          inputs: [],
           name: "_contractRegistry",
           outputs: [
             {
@@ -378,6 +385,13 @@ export default {
           inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
           name: "creators",
           outputs: [{ internalType: "address", name: "", type: "address" }],
+          stateMutability: "view",
+          type: "function"
+        },
+        {
+          inputs: [{ internalType: "uint256", name: "_id", type: "uint256" }],
+          name: "exists",
+          outputs: [{ internalType: "bool", name: "", type: "bool" }],
           stateMutability: "view",
           type: "function"
         },
@@ -580,14 +594,14 @@ export default {
           type: "function"
         },
         {
-          inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+          inputs: [],
           name: "tokenSupply",
           outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
           stateMutability: "view",
           type: "function"
         },
         {
-          inputs: [{ internalType: "uint256", name: "_id", type: "uint256" }],
+          inputs: [],
           name: "totalSupply",
           outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
           stateMutability: "view",

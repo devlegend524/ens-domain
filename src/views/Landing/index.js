@@ -5,14 +5,17 @@ import services from "services";
 
 export default function Landing() {
   const [nfts, setNFTs] = useState({});
+  const [loadingNFT, setLoadingNFT] = useState(false);
   useEffect(() => {
     async function getNFTList() {
+      setLoadingNFT(true);
       const recentNFTs = await services.nft.getRecentNFTs();
-      console.log(recentNFTs);
       if (recentNFTs.status) {
         setNFTs(recentNFTs.nfts);
+        setLoadingNFT(false);
       } else {
         console.log("no data available");
+        setLoadingNFT(false);
       }
     }
     getNFTList();
@@ -30,9 +33,7 @@ export default function Landing() {
               className="w-14 h-14"
             />
           </div>
-          <div className="font-bold text-center mt-4 text-4xl">
-            {".WETH"}
-          </div>
+          <div className="font-bold text-center mt-4 text-4xl">{".WETH"}</div>
         </div>
 
         <div className="text-center max-w-sm m-auto mt-4 mb-8">
@@ -57,7 +58,7 @@ export default function Landing() {
           </div>
         </div>
         <div className="border border-gray-100 m-2 p-2">
-          {nfts.length > 0 ? (
+          {!loadingNFT && nfts.length > 0 ? (
             <components.ScrollMenu
               containerId="all-game-container"
               leftButtonId="all-game-left"
@@ -73,11 +74,11 @@ export default function Landing() {
                 />
               ))}
             </components.ScrollMenu>
-          ) : (
+          ) : loadingNFT ? (
             <div className="flex justify-center mx-auto ">
               <components.Spinner size="md" color={"black"} />
             </div>
-          )}
+          ): ("")}
         </div>
       </div>
     </>

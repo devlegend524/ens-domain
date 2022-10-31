@@ -71,7 +71,7 @@ class Modal extends React.PureComponent {
                 src={services.linking.static("images/close.png")}
                 className="w-3 h-3"
                 alt="close"
-                srcset=""
+                srcSet=""
               />
             </div>
           </div>
