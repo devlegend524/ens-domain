@@ -732,7 +732,7 @@ export default {
       ]
     },
     LeasingAgent: {
-      address: "0xA5ED011059184F8FfBc1152DaD45947Dc4ACf487",
+      address: "0xc04f7cAfF2e02086d4Fd8bDbe8656951af4fc3ec",
       abi: [
         {
           inputs: [
@@ -1354,7 +1354,7 @@ export default {
       ]
     },
     ReverseResolverRegistry: {
-      address: "0xA8283b5E322dDFF506A81BBc917f7a703738f108",
+      address: "0x3Dc1BE14CC604ca67300344900131C0c1b677ECE",
       abi: [
         {
           inputs: [
