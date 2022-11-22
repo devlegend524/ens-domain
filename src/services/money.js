@@ -23,12 +23,12 @@ const money = {
 
   renderWWETH: amount => {
     const amt = ethers.utils.formatEther(amount);
-    return (+amt).toFixed(4) + " WWETH";
+    return (+amt).toFixed(4) + " ETH";
   },
 
   renderWETH: amount => {
     const amt = ethers.utils.formatEther(amount);
-    return (+amt).toFixed(4) + " WETH";
+    return (+amt).toFixed(4) + " ETH";
   },
 
   // multiplies two strings together
