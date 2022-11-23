@@ -269,10 +269,10 @@ const provider = {
           window.location.reload();
         });
 
-        // window.ethereum.on("chainChanged", () => {
-        //   services.logger.info("Metamask chain changed; reloading page");
-        //   window.location.reload();
-        // });
+        window.ethereum.on("chainChanged", () => {
+          services.logger.info("Metamask chain changed; reloading page");
+          window.location.reload();
+        });
 
         await setWalletAutoconnect(connectionType);
         resolve();
