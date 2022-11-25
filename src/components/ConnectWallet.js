@@ -21,6 +21,8 @@ class ConnectWallet extends React.PureComponent {
   }
 
   async connectMetamask(providerFunc) {
+    console.log("adsf")
+    console.log(providerFunc)
     const func = async () => {
       this.setState(
         {

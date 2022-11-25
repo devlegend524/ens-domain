@@ -181,6 +181,7 @@ const provider = {
   connectMetamask: (providerFunc, connectionType) => {
     return new Promise(async (resolve, reject) => {
       let provider = await detectEthereumProvider();
+      console.log(provider.providers)
       if (provider.providers) {
         provider = provider.providers.find(providerFunc);
       }
@@ -200,6 +201,8 @@ const provider = {
       // verify they connected to the right chain
       const chainId = await _getChainId();
       const expectedChainId = parseInt(services.environment.DEFAULT_CHAIN_ID);
+      console.log("chainId:" + chainId)
+      console.log("expectedChainId:" + expectedChainId)
       if (chainId !== expectedChainId) {
         try {
           services.logger.info("Attempting to switch chains");
