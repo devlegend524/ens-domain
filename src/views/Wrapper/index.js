@@ -59,7 +59,7 @@ export default function Wrapper({ children }) {
   }, []);
 
   return (
-    <div className="max-w-5xl w-full p-2 mx-auto font-poppins">
+    <div className="max-w-5xl custom-xl w-full p-2 mx-auto font-poppins">
       <Navbar className="mx-auto max-w-screen-xl py-2 px-2 lg:px-3 lg:py-4 shadow-none">
         <div className="container mx-auto flex items-center justify-between text-blue-gray-900">
           <Link

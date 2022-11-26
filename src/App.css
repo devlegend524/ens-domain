@@ -14,7 +14,9 @@
       transform: rotate(0.5turn);
     }
   }
-
+.custom-xl{
+  max-width: 66rem!important;
+}
   .border-info {
     outline: 2px solid #E0E4CC;
     border-radius: 10px;
@@ -61,6 +63,10 @@
     overflow: hidden;
     outline: 1px solid #cec5c8;
     padding: 3px;
+  }
+  .fixed-306{
+    width: 306px;
+    
   }
   
 
