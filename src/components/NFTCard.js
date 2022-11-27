@@ -46,7 +46,7 @@ export default function NFTCard({ name, isLinked, classes }) {
       const ctx = imageCanvas.getContext("2d");
       loadImage(services.linking.static("images/nft_bg.png")).then(
         async (data) => {
-          ctx.drawImage(data, 0, 0, 300, 300);
+          ctx.drawImage(data, 0, 0);
           ctx.fillStyle = "rgba(30, 144, 255, 0.1)";
           ctx.fillRect(0, 0, 300, 300);
           ctx.fillStyle = "white";
