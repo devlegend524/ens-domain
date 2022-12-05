@@ -195,6 +195,8 @@ class WensClient {
     const nameArr = await client.utils.string2AsciiArray(name, 62);
     const namespace = domainSplit[domainSplit.length - 1];
     const namespaceHash = await client.utils.nameHash(namespace);
+
+    console.log("generateDomainPriceProof -------", namespaceHash.toString())
     const hash = await client.utils.nameHash(domain);
     let minLength = name.length;
     console.log(minLength);
@@ -315,6 +317,8 @@ class WensClient {
       domains,
       quantities
     );
+    console.log("-------- names quantities", hashes, quantities)
+    
     const value = total;
     const gasEstimate = await this.contracts.LeasingAgent.estimateGas.registerWithPreimage(
       hashes,
@@ -329,6 +333,7 @@ class WensClient {
     const gasLimit = gasEstimate.add(
       this._getTreasuryGasSurplus().mul(hashes.length)
     );
+    
     const registerTx = await this.contracts.LeasingAgent.registerWithPreimage(
       hashes,
       quantities,
@@ -526,8 +531,8 @@ class WensClient {
   }
 
   async getResolver(domain) {
-    const hash = await client.utils.nameHash(domain);
-    const resolver = await this.contracts.ResolverRegistry.get(hash, hash);
+    let hash = await client.utils.nameHash(domain);
+    const resolver = await this.contracts.ResolverRegistry.get(hash.toString(), hash.toString());
     return resolver;
   }
 
@@ -606,8 +611,8 @@ class WensClient {
   }
 
   async setEVMReverseRecord(domain) {
-    const hash = await client.utils.nameHash(domain);
-    const tx = await this.wens.contracts.EVMReverseResolver.set(hash, []);
+    let hash = await client.utils.nameHash(domain);
+    const tx = await this.wens.contracts.EVMReverseResolver.set(hash.toString(), []);
     await tx.wait();
   }
 
