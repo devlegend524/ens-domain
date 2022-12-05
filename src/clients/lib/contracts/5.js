@@ -3,7 +3,7 @@ export default {
   chainId: "4",
   contracts: {
     Domain: {
-      address: "0x445ff985D9f899d4c6173F6a2dCF23ba49DB047B",
+      address: "0x4c876F5A3907D569C68198d2165faaEA5C846Fa3",
       abi: [
         {
           inputs: [
@@ -634,7 +634,7 @@ export default {
       ]
     },
     EVMReverseResolver: {
-      address: "0xba22e87D7802DCB0B71A40aaD43f376E98816cc9",
+      address: "0x495d137d4fD42241a91767C87aEf19f31d2D8243",
       abi: [
         {
           inputs: [
@@ -732,7 +732,7 @@ export default {
       ]
     },
     LeasingAgent: {
-      address: "0xc591f840031F21007de51711c893297Ba8378fD5",
+      address: "0xeb5F62E2f427Ba6b3E085d178EBa3eE091001861",
       abi: [
         {
           inputs: [
@@ -1062,7 +1062,7 @@ export default {
       ]
     },
     PublicResolver: {
-      address: "0xe51709ED2218BFb38396543eCD7b59Dd3d4900a8",
+      address: "0x8c8FF063625583DC75AaeD0A592da0a58D740cA4",
       abi: [
         {
           inputs: [
@@ -1198,7 +1198,7 @@ export default {
       ]
     },
     RainbowTable: {
-      address: "0xB5271d46344265d0E630Df102cAeE84Bc87Db633",
+      address: "0x033c5dad509D752b0A9F97456C36d19384D0190c",
       abi: [
         {
           inputs: [
@@ -1276,7 +1276,7 @@ export default {
       ]
     },
     ResolverRegistry: {
-      address: "0x4B8A21Fd9De1E7A267BF922256084C9D81A70081",
+      address: "0xffCe8f981E6e0DE93541B7Aa60CeA50FD3EA1362",
       abi: [
         {
           inputs: [
@@ -1354,7 +1354,7 @@ export default {
       ]
     },
     ReverseResolverRegistry: {
-      address: "0xDA7f55Ac5d1855CF9eaD041037921d6dc529DDBd",
+      address: "0x0B57105267b08ea48ECD8486e482faaAef5C0bfF",
       abi: [
         {
           inputs: [
