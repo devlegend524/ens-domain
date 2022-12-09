@@ -16,8 +16,9 @@ function DomainSearch(props) {
     textInput.current.value = "";
     const domainSplit = domain.split(".");
     if (domainSplit.length === 1) {
-      domain = domain + ".weth";
+      domain = domain + ".eth";
     }
+    console.log("here:"+domain)
     services.linking.navigate(navigator, "Domain", { domain });
   };
   const renderStaticImage = (path, alt) => {

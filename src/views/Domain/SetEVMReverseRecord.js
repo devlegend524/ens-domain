@@ -54,7 +54,7 @@ class SetResolver extends React.PureComponent {
         <div className="max-w-md m-auto">
           <div className="mb-2">
             {
-              "Applications can then find your .weth name if they know your wallet address."
+              "Applications can then find your .eth name if they know your wallet address."
             }
           </div>
           <div className="mt-8">
