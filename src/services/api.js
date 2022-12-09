@@ -103,7 +103,7 @@ class WensClient {
     if (client.blocklist.isBlocked(hash)) return false;
     const split = name.split(".");
     if (split.length !== 2) return false;
-    if (split[1] !== "weth") return false;
+    if (split[1] !== "eth") return false;
     if (split[0].length < 1) return false;
     if (split[0].length > 62) return false;
     if (split[0].length >= 4 && split[0][2] === "-" && split[0][3] === "-")

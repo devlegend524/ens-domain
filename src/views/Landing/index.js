@@ -33,7 +33,7 @@ export default function Landing() {
               className="w-14 h-14"
             />
           </div>
-          <div className="font-bold text-center mt-4 text-4xl">{".WETH"}</div>
+          <div className="font-bold text-center mt-4 text-4xl">{".ETH"}</div>
         </div>
 
         <div className="text-center max-w-sm m-auto mt-4 mb-8">

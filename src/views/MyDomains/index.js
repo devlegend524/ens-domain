@@ -78,7 +78,6 @@ class MyDomains extends React.PureComponent {
         return name.indexOf(this.state.search) > -1;
       });
     }
-
     return (
       <div>
         <div className="mt-4 dark:bg-gray-800 bg-gray-100 rounded-lg px-4">

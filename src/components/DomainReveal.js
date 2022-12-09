@@ -15,7 +15,7 @@ function DomainReveal(props) {
     textInput.current.value = "";
     const domainSplit = domain.split(".");
     if (domainSplit.length === 1) {
-      domain = domain + ".weth";
+      domain = domain + ".eth";
     }
     props.reveal(domain);
     if (props.onReveal) setTimeout(props.onReveal, 10);
